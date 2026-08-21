@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>AlexCut — видеоредактор</title>
 
 <style>
@@ -12,9 +13,9 @@
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #111;
+    background: #0f0f0f;
     color: white;
+    font-family: Arial, sans-serif;
 }
 
 header {
@@ -44,14 +45,14 @@ header {
     width: 90px;
     background: #181818;
     border-right: 1px solid #333;
-    padding-top: 15px;
+    padding-top: 10px;
 }
 
 .tool {
-    padding: 18px 5px;
+    padding: 15px 5px;
     text-align: center;
-    cursor: pointer;
     color: #aaa;
+    cursor: pointer;
     font-size: 12px;
 }
 
@@ -61,8 +62,8 @@ header {
 }
 
 .tool-icon {
-    font-size: 24px;
     display: block;
+    font-size: 23px;
     margin-bottom: 5px;
 }
 
@@ -77,37 +78,42 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #0b0b0b;
+    background: #090909;
     padding: 20px;
 }
 
 .video-box {
-    width: 500px;
-    height: 300px;
+    width: min(700px, 90%);
+    height: min(420px, 60vh);
     background: #202020;
     border: 2px dashed #444;
     border-radius: 12px;
     display: flex;
     justify-content: center;
     align-items: center;
-    text-align: center;
+    overflow: hidden;
 }
 
 video {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     display: none;
-    border-radius: 10px;
 }
 
 .upload {
     text-align: center;
 }
 
-.upload button {
+.upload-icon {
+    font-size: 55px;
+}
+
+.upload button,
+.main-button {
     margin-top: 15px;
-    padding: 12px 25px;
-    border: none;
+    padding: 12px 24px;
+    border: 0;
     border-radius: 8px;
     background: #8b5cf6;
     color: white;
@@ -115,32 +121,113 @@ video {
     cursor: pointer;
 }
 
-.timeline {
-    height: 180px;
+.upload button:hover,
+.main-button:hover {
+    background: #7046d8;
+}
+
+.controls {
     background: #181818;
+    padding: 15px 20px;
+    border-top: 1px solid #333;
+}
+
+.time-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    color: #aaa;
+    font-size: 14px;
+}
+
+#timeline {
+    width: 100%;
+    accent-color: #8b5cf6;
+}
+
+.trim-panel {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.trim-panel label {
+    color: #aaa;
+}
+
+.trim-panel input {
+    width: 90px;
+    padding: 9px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background: #252525;
+    color: white;
+}
+
+.timeline-area {
+    height: 150px;
+    background: #151515;
     border-top: 1px solid #333;
     padding: 20px;
 }
 
 .timeline-title {
     color: #aaa;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .track {
-    height: 70px;
+    height: 65px;
     background: #252525;
     border-radius: 8px;
     position: relative;
+    overflow: hidden;
 }
 
-.track-line {
+.track-fill {
     position: absolute;
+    left: 0;
     top: 0;
-    left: 30%;
-    width: 3px;
     height: 100%;
-    background: #8b5cf6;
+    width: 0%;
+    background: #6d45c7;
+    opacity: 0.45;
+}
+
+.play-button {
+    padding: 9px 18px;
+    border: 0;
+    border-radius: 7px;
+    background: #333;
+    color: white;
+    cursor: pointer;
+}
+
+.play-button:hover {
+    background: #444;
+}
+
+@media (max-width: 600px) {
+
+    .sidebar {
+        width: 70px;
+    }
+
+    .tool {
+        font-size: 10px;
+        padding: 12px 2px;
+    }
+
+    .tool-icon {
+        font-size: 20px;
+    }
+
+    .video-box {
+        height: 300px;
+        width: 95%;
+    }
 }
 </style>
 </head>
@@ -148,7 +235,9 @@ video {
 <body>
 
 <header>
-    <div class="logo">Alex<span>Cut</span> 🎬</div>
+    <div class="logo">
+        Alex<span>Cut</span> 🎬
+    </div>
 </header>
 
 <div class="editor">
@@ -194,8 +283,11 @@ video {
             <div class="video-box">
 
                 <div class="upload" id="uploadBox">
-                    <div style="font-size:50px;">🎥</div>
+
+                    <div class="upload-icon">🎥</div>
+
                     <h2>Добавь своё видео</h2>
+
                     <p>Начни создавать свой первый проект</p>
 
                     <button onclick="document.getElementById('videoInput').click()">
@@ -208,6 +300,352 @@ video {
                         accept="video/*"
                         hidden
                     >
+
+                </div>
+
+                <video id="videoPlayer"></video>
+
+            </div>
+
+        </div>
+
+        <div class="controls">
+
+            <div class="time-row">
+                <span id="currentTime">00:00</span>
+                <span id="duration">00:00</span>
+            </div>
+
+            <input
+                type="range"
+                id="timeline"
+                min="0"
+                value="0"
+                step="0.01"
+            >
+
+            <div style="margin-top:12px">
+
+                <button
+                    class="play-button"
+                    id="playButton"
+                >
+                    ▶️ Воспроизвести
+                </button>
+
+            </div>
+
+            <div class="trim-panel">
+
+                <label>Начало:</label>
+
+                <input
+                    type="number"
+                    id="startTime"
+                    min="0"
+                    value="0"
+                    step="0.1
+                    <!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AlexCut — видеоредактор</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #0f0f0f;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    height: 60px;
+    background: #181818;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid #333;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: #8b5cf6;
+}
+
+.editor {
+    display: flex;
+    height: calc(100vh - 60px);
+}
+
+.sidebar {
+    width: 90px;
+    background: #181818;
+    border-right: 1px solid #333;
+    padding-top: 10px;
+}
+
+.tool {
+    padding: 15px 5px;
+    text-align: center;
+    color: #aaa;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.tool:hover {
+    background: #292929;
+    color: white;
+}
+
+.tool-icon {
+    display: block;
+    font-size: 23px;
+    margin-bottom: 5px;
+}
+
+.workspace {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #090909;
+    padding: 20px;
+}
+
+.video-box {
+    width: min(700px, 90%);
+    height: min(420px, 60vh);
+    background: #202020;
+    border: 2px dashed #444;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: none;
+}
+
+.upload {
+    text-align: center;
+}
+
+.upload-icon {
+    font-size: 55px;
+}
+
+.upload button,
+.main-button {
+    margin-top: 15px;
+    padding: 12px 24px;
+    border: 0;
+    border-radius: 8px;
+    background: #8b5cf6;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.upload button:hover,
+.main-button:hover {
+    background: #7046d8;
+}
+
+.controls {
+    background: #181818;
+    padding: 15px 20px;
+    border-top: 1px solid #333;
+}
+
+.time-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    color: #aaa;
+    font-size: 14px;
+}
+
+#timeline {
+    width: 100%;
+    accent-color: #8b5cf6;
+}
+
+.trim-panel {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.trim-panel label {
+    color: #aaa;
+}
+
+.trim-panel input {
+    width: 90px;
+    padding: 9px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background: #252525;
+    color: white;
+}
+
+.timeline-area {
+    height: 150px;
+    background: #151515;
+    border-top: 1px solid #333;
+    padding: 20px;
+}
+
+.timeline-title {
+    color: #aaa;
+    margin-bottom: 12px;
+}
+
+.track {
+    height: 65px;
+    background: #252525;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.track-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    background: #6d45c7;
+    opacity: 0.45;
+}
+
+.play-button {
+    padding: 9px 18px;
+    border: 0;
+    border-radius: 7px;
+    background: #333;
+    color: white;
+    cursor: pointer;
+}
+
+.play-button:hover {
+    background: #444;
+}
+
+@media (max-width: 600px) {
+    .sidebar {
+        width: 70px;
+    }
+
+    .tool {
+        font-size: 10px;
+        padding: 12px 2px;
+    }
+
+    .tool-icon {
+        font-size: 20px;
+    }
+
+    .video-box {
+        height: 300px;
+        width: 95%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        Alex<span>Cut</span> 🎬
+    </div>
+</header>
+
+<div class="editor">
+
+    <div class="sidebar">
+
+        <div class="tool">
+            <span class="tool-icon">🎬</span>
+            Видео
+        </div>
+
+        <div class="tool">
+            <span class="tool-icon">✂️</span>
+            Обрезка
+        </div>
+
+        <div class="tool">
+            <span class="tool-icon">🎵</span>
+            Музыка
+        </div>
+
+        <div class="tool">
+            <span class="tool-icon">📝</span>
+            Текст
+        </div>
+
+        <div class="tool">
+            <span class="tool-icon">✨</span>
+            Эффекты
+        </div>
+
+        <div class="tool">
+            <span class="tool-icon">🤖</span>
+            AI
+        </div>
+
+    </div>
+
+    <div class="workspace">
+
+        <div class="preview">
+
+            <div class="video-box">
+
+                <div class="upload" id="uploadBox">
+
+                    <div class="upload-icon">🎥</div>
+
+                    <h2>Добавь своё видео</h2>
+
+                    <p>Начни создавать свой первый проект</p>
+
+                    <button onclick="document.getElementById('videoInput').click()">
+                        + Добавить видео
+                    </button>
+
+                    <input
+                        type="file"
+                        id="videoInput"
+                        accept="video/*"
+                        hidden
+                    >
+
                 </div>
 
                 <video id="videoPlayer" controls></video>
@@ -216,14 +654,78 @@ video {
 
         </div>
 
-        <div class="timeline">
+        <div class="controls">
+
+            <div class="time-row">
+                <span id="currentTime">00:00</span>
+                <span id="duration">00:00</span>
+            </div>
+
+            <input
+                type="range"
+                id="timeline"
+                min="0"
+                value="0"
+                step="0.01"
+            >
+
+            <div style="margin-top:12px">
+
+                <button
+                    class="play-button"
+                    id="playButton"
+                >
+                    ▶️ Воспроизвести
+                </button>
+
+            </div>
+
+            <div class="trim-panel">
+
+                <label>Начало:</label>
+
+                <input
+                    type="number"
+                    id="startTime"
+                    min="0"
+                    value="0"
+                    step="0.1"
+                >
+
+                <label>Конец:</label>
+
+                <input
+                    type="number"
+                    id="endTime"
+                    min="0"
+                    value="0"
+                    step="0.1"
+                >
+
+                <button
+                    class="main-button"
+                    id="trimButton"
+                >
+                    ✂️ Применить обрезку
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="timeline-area">
 
             <div class="timeline-title">
-                Таймлайн
+                🎞️ Таймлайн
             </div>
 
             <div class="track">
-                <div class="track-line"></div>
+
+                <div
+                    class="track-fill"
+                    id="trackFill"
+                ></div>
+
             </div>
 
         </div>
@@ -238,6 +740,36 @@ const videoInput = document.getElementById("videoInput");
 const videoPlayer = document.getElementById("videoPlayer");
 const uploadBox = document.getElementById("uploadBox");
 
+const timeline = document.getElementById("timeline");
+const currentTimeText = document.getElementById("currentTime");
+const durationText = document.getElementById("duration");
+
+const playButton = document.getElementById("playButton");
+
+const startTimeInput = document.getElementById("startTime");
+const endTimeInput = document.getElementById("endTime");
+
+const trimButton = document.getElementById("trimButton");
+const trackFill = document.getElementById("trackFill");
+
+let videoDuration = 0;
+let trimStart = 0;
+let trimEnd = 0;
+
+function formatTime(seconds) {
+
+    if (!isFinite(seconds)) {
+        return "00:00";
+    }
+
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+
+    return String(minutes).padStart(2, "0") +
+        ":" +
+        String(secs).padStart(2, "0");
+}
+
 videoInput.addEventListener("change", function() {
 
     const file = this.files[0];
@@ -251,9 +783,146 @@ videoInput.addEventListener("change", function() {
     uploadBox.style.display = "none";
     videoPlayer.style.display = "block";
 
+    videoPlayer.load();
+});
+
+videoPlayer.addEventListener("loadedmetadata", function() {
+
+    videoDuration = videoPlayer.duration;
+
+    trimStart = 0;
+    trimEnd = videoDuration;
+
+    timeline.max = videoDuration;
+    timeline.value = 0;
+
+    startTimeInput.max = videoDuration;
+    endTimeInput.max = videoDuration;
+
+    startTimeInput.value = "0";
+    endTimeInput.value = videoDuration.toFixed(1);
+
+    durationText.textContent = formatTime(videoDuration);
+});
+
+videoPlayer.addEventListener("timeupdate", function() {
+
+    timeline.value = videoPlayer.currentTime;
+
+    currentTimeText.textContent =
+        formatTime(videoPlayer.currentTime);
+
+    if (videoDuration > 0) {
+
+        const percent =
+            (videoPlayer.currentTime / videoDuration) * 100;
+
+        trackFill.style.width = percent + "%";
+    }
+
+    if (
+        trimEnd > trimStart &&
+        videoPlayer.currentTime >= trimEnd
+    ) {
+
+        videoPlayer.pause();
+
+        videoPlayer.currentTime = trimStart;
+
+        playButton.textContent = "▶️ Воспроизвести";
+    }
+});
+
+timeline.addEventListener("input", function() {
+
+    videoPlayer.currentTime = Number(this.value);
+
+});
+
+playButton.addEventListener("click", function() {
+
+    if (videoPlayer.paused) {
+
+        videoPlayer.play();
+
+        playButton.textContent = "⏸️ Пауза";
+
+    } else {
+
+        videoPlayer.pause();
+
+        playButton.textContent = "▶️ Воспроизвести";
+    }
+
+});
+
+startTimeInput.addEventListener("change", function() {
+
+    let value = Number(this.value);
+
+    if (value < 0) {
+        value = 0;
+    }
+
+    if (value >= trimEnd) {
+        value = Math.max(0, trimEnd - 0.1);
+    }
+
+    trimStart = value;
+
+    this.value = value.toFixed(1);
+
+});
+
+endTimeInput.addEventListener("change", function() {
+
+    let value = Number(this.value);
+
+    if (value > videoDuration) {
+        value = videoDuration;
+    }
+
+    if (value <= trimStart) {
+        value = Math.min(videoDuration, trimStart + 0.1);
+    }
+
+    trimEnd = value;
+
+    this.value = value.toFixed(1);
+
+});
+
+trimButton.addEventListener("click", function() {
+
+    if (!videoPlayer.src) {
+
+        alert("Сначала добавь видео.");
+
+        return;
+    }
+
+    trimStart = Number(startTimeInput.value);
+    trimEnd = Number(endTimeInput.value);
+
+    if (trimStart >= trimEnd) {
+
+        alert("Начало должно быть меньше конца.");
+
+        return;
+    }
+
+    videoPlayer.currentTime = trimStart;
+
+    alert(
+        "Обрезка установлена: " +
+        formatTime(trimStart) +
+        " — " +
+        formatTime(trimEnd)
+    );
+
 });
 
 </script>
 
 </body>
-</html>
+            </html>
