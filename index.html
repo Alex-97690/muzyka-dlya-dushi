@@ -708,6 +708,12 @@ video {
                 >
                     ✂️ Применить обрезку
                 </button>
+                <button
+    class="main-button"
+    id="exportButton"
+>
+    💾 Экспорт видео
+                </button>
 
             </div>
 
@@ -922,7 +928,16 @@ trimButton.addEventListener("click", function() {
 
 });
 
-</script>
+exportButton.addEventListener("click", function() {
+
+    if (!videoPlayer.src) {
+        alert("Сначала добавь видео.");
+        return;
+    }
+
+    alert("🎬 Экспорт готовится! Настоящее сохранение видео подключим следующим шагом.");
+
+}); </script>
 
 </body>
             </html>
