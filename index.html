@@ -1,527 +1,259 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Музыка для души</title>
+<title>AlexCut — видеоредактор</title>
 
 <style>
-
 * {
     box-sizing: border-box;
-}
-
-html {
-    scroll-behavior: smooth;
 }
 
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #080b16;
+    background: #111;
     color: white;
 }
 
 header {
-    padding: 70px 20px;
-    text-align: center;
-    background: linear-gradient(135deg, #6d28d9, #db2777, #111827);
-}
-
-header h1 {
-    font-size: 48px;
-    margin: 0 0 15px;
-}
-
-header p {
-    font-size: 19px;
-    line-height: 1.6;
-    max-width: 650px;
-    margin: auto;
-}
-
-nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: #111827;
-    padding: 15px;
-    text-align: center;
-}
-
-nav a {
-    color: white;
-    text-decoration: none;
-    margin: 5px;
-    padding: 10px 13px;
-    display: inline-block;
-    border-radius: 20px;
-}
-
-nav a:hover {
-    background: #293449;
-}
-
-.container {
-    max-width: 950px;
-    margin: auto;
-    padding: 35px 18px;
-}
-
-section {
-    margin-bottom: 60px;
-}
-
-h2 {
-    text-align: center;
-    font-size: 31px;
-    margin-bottom: 25px;
-}
-
-.song {
-    background: #151c2e;
-    border: 1px solid #293449;
-    padding: 25px;
-    margin: 20px 0;
-    border-radius: 22px;
-}
-
-.song-top {
+    height: 60px;
+    background: #181818;
     display: flex;
     align-items: center;
-    gap: 20px;
+    padding: 0 20px;
+    border-bottom: 1px solid #333;
 }
 
-.cover {
-    width: 110px;
-    height: 110px;
-    min-width: 110px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #7c3aed, #ec4899);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-}
-
-.song h3 {
-    margin: 0 0 8px;
-    font-size: 23px;
-}
-
-.song p {
-    color: #cbd5e1;
-    line-height: 1.5;
-}
-
-audio {
-    width: 100%;
-    margin: 20px 0;
-}
-
-.download {
-    display: inline-block;
-    background: #ec4899;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 25px;
-    text-decoration: none;
+.logo {
+    font-size: 24px;
     font-weight: bold;
 }
 
-.family {
-    background: #151c2e;
-    border-radius: 22px;
-    padding: 30px;
-    text-align: center;
-    line-height: 1.8;
+.logo span {
+    color: #8b5cf6;
 }
 
-.family-names {
-    font-size: 25px;
-    font-weight: bold;
-}
-
-.photo-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-}
-
-.photo {
-    min-height: 190px;
-    border: 2px dashed #64748b;
-    border-radius: 20px;
+.editor {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    height: calc(100vh - 60px);
+}
+
+.sidebar {
+    width: 90px;
+    background: #181818;
+    border-right: 1px solid #333;
+    padding-top: 15px;
+}
+
+.tool {
+    padding: 18px 5px;
     text-align: center;
+    cursor: pointer;
+    color: #aaa;
+    font-size: 12px;
+}
+
+.tool:hover {
+    background: #292929;
+    color: white;
+}
+
+.tool-icon {
+    font-size: 24px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.workspace {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #0b0b0b;
     padding: 20px;
-    background: #151c2e;
-    color: #cbd5e1;
 }
 
-.contact {
-    background: #151c2e;
-    padding: 30px;
-    border-radius: 22px;
+.video-box {
+    width: 500px;
+    height: 300px;
+    background: #202020;
+    border: 2px dashed #444;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
-    line-height: 1.8;
 }
 
-footer {
+video {
+    max-width: 100%;
+    max-height: 100%;
+    display: none;
+    border-radius: 10px;
+}
+
+.upload {
     text-align: center;
-    padding: 35px 20px;
-    background: #050711;
-    color: #94a3b8;
 }
 
-@media (max-width: 650px) {
-
-    header h1 {
-        font-size: 36px;
-    }
-
-    .song-top {
-        align-items: flex-start;
-    }
-
-    .cover {
-        width: 85px;
-        height: 85px;
-        min-width: 85px;
-        font-size: 36px;
-    }
-
-    .photo-grid {
-        grid-template-columns: 1fr;
-    }
-
+.upload button {
+    margin-top: 15px;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    background: #8b5cf6;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
 }
 
+.timeline {
+    height: 180px;
+    background: #181818;
+    border-top: 1px solid #333;
+    padding: 20px;
+}
+
+.timeline-title {
+    color: #aaa;
+    margin-bottom: 15px;
+}
+
+.track {
+    height: 70px;
+    background: #252525;
+    border-radius: 8px;
+    position: relative;
+}
+
+.track-line {
+    position: absolute;
+    top: 0;
+    left: 30%;
+    width: 3px;
+    height: 100%;
+    background: #8b5cf6;
+}
 </style>
 </head>
 
 <body>
 
 <header>
-
-<h1>🎵 Музыка для души</h1>
-
-<p>
-Песни, которые рождаются из любви,
-семьи, жизни и настоящих чувств ❤️
-</p>
-
+    <div class="logo">Alex<span>Cut</span> 🎬</div>
 </header>
 
+<div class="editor">
 
-<nav>
+    <div class="sidebar">
 
-<a href="#music">🎵 Музыка</a>
+        <div class="tool">
+            <span class="tool-icon">🎬</span>
+            Видео
+        </div>
 
-<a href="#family">❤️ Семья</a>
+        <div class="tool">
+            <span class="tool-icon">✂️</span>
+            Обрезка
+        </div>
 
-<a href="#photos">📸 Фото</a>
+        <div class="tool">
+            <span class="tool-icon">🎵</span>
+            Музыка
+        </div>
 
-<a href="#contact">📩 Контакты</a>
+        <div class="tool">
+            <span class="tool-icon">📝</span>
+            Текст
+        </div>
 
-</nav>
+        <div class="tool">
+            <span class="tool-icon">✨</span>
+            Эффекты
+        </div>
 
+        <div class="tool">
+            <span class="tool-icon">🤖</span>
+            AI
+        </div>
 
-<div class="container">
+    </div>
 
+    <div class="workspace">
 
-<section id="music">
+        <div class="preview">
 
-<h2>🎧 Наши песни</h2>
+            <div class="video-box">
 
+                <div class="upload" id="uploadBox">
+                    <div style="font-size:50px;">🎥</div>
+                    <h2>Добавь своё видео</h2>
+                    <p>Начни создавать свой первый проект</p>
 
-<div class="song">
+                    <button onclick="document.getElementById('videoInput').click()">
+                        + Добавить видео
+                    </button>
 
-<div class="song-top">
+                    <input
+                        type="file"
+                        id="videoInput"
+                        accept="video/*"
+                        hidden
+                    >
+                </div>
 
-<div class="cover">
-🎵
-</div>
+                <video id="videoPlayer" controls></video>
 
-<div>
+            </div>
 
-<h3>
-Первая песня
-</h3>
+        </div>
 
-<p>
-Здесь появится первая песня
-с нашего музыкального сайта.
-</p>
+        <div class="timeline">
 
-</div>
+            <div class="timeline-title">
+                Таймлайн
+            </div>
 
-</div>
+            <div class="track">
+                <div class="track-line"></div>
+            </div>
 
+        </div>
 
-<audio controls>
-
-<source
-src="Нью-Йорк 250 Лет.mp3"
-type="audio/mpeg">
-
-Ваш браузер не поддерживает аудио.
-
-</audio>
-
-
-<a
-class="download"
-href="Нью-Йорк 250 Лет.mp3"
-download>
-
-⬇️ Скачать песню
-
-</a>
-
-</div>
-
-
-
-<div class="song">
-
-<div class="song-top">
-
-<div class="cover">
-❤️
-</div>
-
-<div>
-
-<h3>
-Песня о любви
-</h3>
-
-<p>
-Песня о любви и самых
-настоящих чувствах.
-</p>
+    </div>
 
 </div>
 
-</div>
+<script>
 
+const videoInput = document.getElementById("videoInput");
+const videoPlayer = document.getElementById("videoPlayer");
+const uploadBox = document.getElementById("uploadBox");
 
-<audio controls>
+videoInput.addEventListener("change", function() {
 
-<source
-src="songs/song2.mp3"
-type="audio/mpeg">
+    const file = this.files[0];
 
-Ваш браузер не поддерживает аудио.
+    if (!file) return;
 
-</audio>
+    const videoURL = URL.createObjectURL(file);
 
+    videoPlayer.src = videoURL;
 
-<a
-class="download"
-href="songs/song2.mp3"
-download>
+    uploadBox.style.display = "none";
+    videoPlayer.style.display = "block";
 
-⬇️ Скачать песню
+});
 
-</a>
-
-</div>
-
-
-
-<div class="song">
-
-<div class="song-top">
-
-<div class="cover">
-👨‍👩‍👧
-</div>
-
-<div>
-
-<h3>
-Песня о нашей семье
-</h3>
-
-<p>
-Музыка, созданная для
-самых дорогих людей.
-</p>
-
-</div>
-
-</div>
-
-
-<audio controls>
-
-<source
-src="songs/song3.mp3"
-type="audio/mpeg">
-
-Ваш браузер не поддерживает аудио.
-
-</audio>
-
-
-<a
-class="download"
-href="songs/song3.mp3"
-download>
-
-⬇️ Скачать песню
-
-</a>
-
-</div>
-
-</section>
-
-
-
-<section id="family">
-
-<h2>
-❤️ Наша семья
-</h2>
-
-
-<div class="family">
-
-<div class="family-names">
-
-Алекс ❤️ Елена ❤️ Ангелина
-
-</div>
-
-
-<p>
-Этот сайт создан с любовью
-для нашей семьи.
-</p>
-
-
-<p>
-Здесь будут наши песни,
-фотографии, воспоминания
-и истории нашей жизни.
-</p>
-
-
-<p>
-Каждая песня — это частичка
-нашей души. ❤️
-</p>
-
-</div>
-
-</section>
-
-
-
-<section id="photos">
-
-<h2>
-📸 Наши фотографии
-</h2>
-
-
-<div class="photo-grid">
-
-
-<div class="photo">
-
-📷
-
-<br><br>
-
-Здесь будет наша
-семейная фотография
-
-</div>
-
-
-<div class="photo">
-
-📷
-
-<br><br>
-
-Здесь будет фотография
-
-</div>
-
-
-<div class="photo">
-
-📷
-
-<br><br>
-
-Здесь будет фотография
-
-</div>
-
-
-</div>
-
-</section>
-
-
-
-<section id="contact">
-
-<h2>
-📩 Контакты
-</h2>
-
-
-<div class="contact">
-
-<p>
-Спасибо, что заглянули
-на наш музыкальный сайт. ❤️
-</p>
-
-
-<p>
-Здесь будут появляться
-новые песни.
-</p>
-
-
-<p>
-🎵 Музыка для души
-</p>
-
-</div>
-
-</section>
-
-
-</div>
-
-
-<footer>
-
-🎵 Музыка для души
-
-<br><br>
-
-Создано с любовью ❤️
-
-<br><br>
-
-© 2026
-
-</footer>
-
+</script>
 
 </body>
 </html>
