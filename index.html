@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script src="ffmpeg-loader.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -167,36 +166,6 @@ video {
     color: white;
 }
 
-.timeline-area {
-    height: 150px;
-    background: #151515;
-    border-top: 1px solid #333;
-    padding: 20px;
-}
-
-.timeline-title {
-    color: #aaa;
-    margin-bottom: 12px;
-}
-
-.track {
-    height: 65px;
-    background: #252525;
-    border-radius: 8px;
-    position: relative;
-    overflow: hidden;
-}
-
-.track-fill {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 0%;
-    background: #6d45c7;
-    opacity: 0.45;
-}
-
 .play-button {
     padding: 9px 18px;
     border: 0;
@@ -210,8 +179,13 @@ video {
     background: #444;
 }
 
-@media (max-width: 600px) {
+.message {
+    margin-top: 10px;
+    color: #aaa;
+    font-size: 14px;
+}
 
+@media (max-width: 600px) {
     .sidebar {
         width: 70px;
     }
@@ -291,7 +265,7 @@ video {
 
                     <p>Начни создавать свой первый проект</p>
 
-                    <button onclick="document.getElementById('videoInput').click()">
+                    <button id="addVideoButton">
                         + Добавить видео
                     </button>
 
@@ -321,128 +295,7 @@ video {
                 type="range"
                 id="timeline"
                 min="0"
-                value="0"
-                step="0.01"
-            >
-
-            <div style="margin-top:12px">
-
-                <button
-                    class="play-button"
-                    id="playButton"
-                >
-                    ▶️ Воспроизвести
-                </button>
-
-            </div>
-
-            <div class="trim-panel">
-
-                <label>Начало:</label>
-
-                <input
-                    type="number"
-                    id="startTime"
-                    min="0"
-                    value="0"
-                    step="0.1"
->
-                    <!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AlexCut — видеоредактор</title>
-</head>
-
-<body>
-
-<header>
-    <div class="logo">
-        Alex<span>Cut</span> 🎬
-    </div>
-</header>
-
-<div class="editor">
-
-    <div class="sidebar">
-
-        <div class="tool">
-            <span class="tool-icon">🎬</span>
-            Видео
-        </div>
-
-        <div class="tool">
-            <span class="tool-icon">✂️</span>
-            Обрезка
-        </div>
-
-        <div class="tool">
-            <span class="tool-icon">🎵</span>
-            Музыка
-        </div>
-
-        <div class="tool">
-            <span class="tool-icon">📝</span>
-            Текст
-        </div>
-
-        <div class="tool">
-            <span class="tool-icon">✨</span>
-            Эффекты
-        </div>
-
-        <div class="tool">
-            <span class="tool-icon">🤖</span>
-            AI
-        </div>
-
-    </div>
-
-    <div class="workspace">
-
-        <div class="preview">
-
-            <div class="video-box">
-
-                <div class="upload" id="uploadBox">
-
-                    <div class="upload-icon">🎥</div>
-
-                    <h2>Добавь своё видео</h2>
-
-                    <p>Начни создавать свой первый проект</p>
-
-                    <button onclick="document.getElementById('videoInput').click()">
-                        + Добавить видео
-                    </button>
-
-                    <input
-                        type="file"
-                        id="videoInput"
-                        accept="video/*"
-                        hidden
-                    >
-
-                </div>
-
-                <video id="videoPlayer" controls></video>
-
-            </div>
-
-        </div>
-
-        <div class="controls">
-
-            <div class="time-row">
-                <span id="currentTime">00:00</span>
-                <span id="duration">00:00</span>
-            </div>
-
-            <input
-                type="range"
-                id="timeline"
-                min="0"
+                max="0"
                 value="0"
                 step="0.01"
             >
@@ -486,30 +339,18 @@ video {
                 >
                     ✂️ Применить обрезку
                 </button>
+
                 <button
-    class="main-button"
-    id="exportButton"
->
-    💾 Экспорт видео
+                    class="main-button"
+                    id="exportButton"
+                >
+                    💾 Экспорт видео
                 </button>
 
             </div>
 
-        </div>
-
-        <div class="timeline-area">
-
-            <div class="timeline-title">
-                🎞️ Таймлайн
-            </div>
-
-            <div class="track">
-
-                <div
-                    class="track-fill"
-                    id="trackFill"
-                ></div>
-
+            <div class="message" id="message">
+                Видео пока не загружено.
             </div>
 
         </div>
@@ -521,25 +362,42 @@ video {
 <script>
 
 const videoInput = document.getElementById("videoInput");
+const addVideoButton = document.getElementById("addVideoButton");
+
 const videoPlayer = document.getElementById("videoPlayer");
 const uploadBox = document.getElementById("uploadBox");
 
 const timeline = document.getElementById("timeline");
-const currentTimeText = document.getElementById("currentTime");
-const durationText = document.getElementById("duration");
 
-const playButton = document.getElementById("playButton");
+const currentTimeText =
+    document.getElementById("currentTime");
 
-const startTimeInput = document.getElementById("startTime");
-const endTimeInput = document.getElementById("endTime");
+const durationText =
+    document.getElementById("duration");
 
-const trimButton = document.getElementById("trimButton");
-const exportButton = document.getElementById("exportButton"); 
-const trackFill = document.getElementById("trackFill");
+const playButton =
+    document.getElementById("playButton");
+
+const startTimeInput =
+    document.getElementById("startTime");
+
+const endTimeInput =
+    document.getElementById("endTime");
+
+const trimButton =
+    document.getElementById("trimButton");
+
+const exportButton =
+    document.getElementById("exportButton");
+
+const message =
+    document.getElementById("message");
+
 
 let videoDuration = 0;
 let trimStart = 0;
 let trimEnd = 0;
+
 
 function formatTime(seconds) {
 
@@ -547,250 +405,277 @@ function formatTime(seconds) {
         return "00:00";
     }
 
-    const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
+    const minutes =
+        Math.floor(seconds / 60);
 
-    return String(minutes).padStart(2, "0") +
-        ":" +
-        String(secs).padStart(2, "0");
+    const secs =
+        Math.floor(seconds % 60);
+
+    return String(minutes).padStart(2, "0")
+        + ":"
+        + String(secs).padStart(2, "0");
 }
+
+
+addVideoButton.addEventListener("click", function() {
+
+    videoInput.click();
+
+});
+
 
 videoInput.addEventListener("change", function() {
 
     const file = this.files[0];
 
-    if (!file) return;
+    if (!file) {
+        return;
+    }
 
-    const videoURL = URL.createObjectURL(file);
+    const videoURL =
+        URL.createObjectURL(file);
 
     videoPlayer.src = videoURL;
 
     uploadBox.style.display = "none";
+
     videoPlayer.style.display = "block";
 
     videoPlayer.load();
-});
 
-videoPlayer.addEventListener("loadedmetadata", function() {
-
-    videoDuration = videoPlayer.duration;
-
-    trimStart = 0;
-    trimEnd = videoDuration;
-
-    timeline.max = videoDuration;
-    timeline.value = 0;
-
-    startTimeInput.max = videoDuration;
-    endTimeInput.max = videoDuration;
-
-    startTimeInput.value = "0";
-    endTimeInput.value = videoDuration.toFixed(1);
-
-    durationText.textContent = formatTime(videoDuration);
-});
-
-videoPlayer.addEventListener("timeupdate", function() {
-
-    timeline.value = videoPlayer.currentTime;
-
-    currentTimeText.textContent =
-        formatTime(videoPlayer.currentTime);
-
-    if (videoDuration > 0) {
-
-        const percent =
-            (videoPlayer.currentTime / videoDuration) * 100;
-
-        trackFill.style.width = percent + "%";
-    }
-
-    if (
-        trimEnd > trimStart &&
-        videoPlayer.currentTime >= trimEnd
-    ) {
-
-        videoPlayer.pause();
-
-        videoPlayer.currentTime = trimStart;
-
-        playButton.textContent = "▶️ Воспроизвести";
-    }
-});
-
-timeline.addEventListener("input", function() {
-
-    videoPlayer.currentTime = Number(this.value);
+    message.textContent =
+        "Видео загружено ✅";
 
 });
 
-playButton.addEventListener("click", function() {
 
-    if (videoPlayer.paused) {
+videoPlayer.addEventListener(
+    "loadedmetadata",
+    function() {
 
-        videoPlayer.play();
+        videoDuration =
+            videoPlayer.duration;
 
-        playButton.textContent = "⏸️ Пауза";
+        trimStart = 0;
 
-    } else {
+        trimEnd = videoDuration;
 
-        videoPlayer.pause();
+        timeline.max =
+            videoDuration;
 
-        playButton.textContent = "▶️ Воспроизвести";
+        timeline.value = 0;
+
+        startTimeInput.max =
+            videoDuration;
+
+        endTimeInput.max =
+            videoDuration;
+
+        startTimeInput.value = "0";
+
+        endTimeInput.value =
+            videoDuration.toFixed(1);
+
+        durationText.textContent =
+            formatTime(videoDuration);
+
     }
+);
 
-});
 
-startTimeInput.addEventListener("change", function() {
+videoPlayer.addEventListener(
+    "timeupdate",
+    function() {
 
-    let value = Number(this.value);
+        timeline.value =
+            videoPlayer.currentTime;
 
-    if (value < 0) {
-        value = 0;
-    }
+        currentTimeText.textContent =
+            formatTime(
+                videoPlayer.currentTime
+            );
 
-    if (value >= trimEnd) {
-        value = Math.max(0, trimEnd - 0.1);
-    }
-
-    trimStart = value;
-
-    this.value = value.toFixed(1);
-
-});
-
-endTimeInput.addEventListener("change", function() {
-
-    let value = Number(this.value);
-
-    if (value > videoDuration) {
-        value = videoDuration;
-    }
-
-    if (value <= trimStart) {
-        value = Math.min(videoDuration, trimStart + 0.1);
-    }
-
-    trimEnd = value;
-
-    this.value = value.toFixed(1);
-
-});
-
-trimButton.addEventListener("click", function() {
-
-    if (!videoPlayer.src) {
-
-        alert("Сначала добавь видео.");
-
-        return;
-    }
-
-    trimStart = Number(startTimeInput.value);
-    trimEnd = Number(endTimeInput.value);
-
-    if (trimStart >= trimEnd) {
-
-        alert("Начало должно быть меньше конца.");
-
-        return;
-    }
-
-    videoPlayer.currentTime = trimStart;
-
-    alert(
-        "Обрезка установлена: " +
-        formatTime(trimStart) +
-        " — " +
-        formatTime(trimEnd)
-    );
-
-});
-
-exportButton.addEventListener("click", async function() {
-
-    if (!videoPlayer.src) {
-        alert("Сначала добавь видео.");
-        return;
-    }
-
-    if (!videoPlayer.captureStream) {
-        alert("Экспорт видео пока не поддерживается этим браузером.");
-        return;
-    }
-
-    const start = Number(startTimeInput.value);
-    const end = Number(endTimeInput.value);
-
-    if (start >= end) {
-        alert("Проверь время начала и конца.");
-        return;
-    }
-
-    try {
-
-        const stream = videoPlayer.captureStream();
-
-        const recorder = new MediaRecorder(stream, {
-            mimeType: "video/webm"
-        });
-
-        const chunks = [];
-
-        recorder.ondataavailable = function(event) {
-            if (event.data.size > 0) {
-                chunks.push(event.data);
-            }
-        };
-
-        recorder.onstop = function() {
-
-            const blob = new Blob(chunks, {
-                type: "video/webm"
-            });
-
-            const url = URL.createObjectURL(blob);
-
-            const link = document.createElement("a");
-
-            link.href = url;
-            link.download = "AlexCut-video.webm";
-
-            document.body.appendChild(link);
-
-            link.click();
-
-            link.remove();
-
-            URL.revokeObjectURL(url);
-
-            alert("✅ Видео сохранено!");
-        };
-
-        videoPlayer.currentTime = start;
-
-        await videoPlayer.play();
-
-        recorder.start();
-
-        setTimeout(function() {
+        if (
+            trimEnd > trimStart &&
+            videoPlayer.currentTime >= trimEnd
+        ) {
 
             videoPlayer.pause();
 
-            recorder.stop();
+            videoPlayer.currentTime =
+                trimStart;
 
-        }, (end - start) * 1000);
+            playButton.textContent =
+                "▶️ Воспроизвести";
 
-    } catch (error) {
-
-        console.error(error);
-
-        alert("❌ Не удалось экспортировать видео.");
+        }
 
     }
+);
 
-});
-    
+
+timeline.addEventListener(
+    "input",
+    function() {
+
+        videoPlayer.currentTime =
+            Number(this.value);
+
+    }
+);
+
+
+playButton.addEventListener(
+    "click",
+    function() {
+
+        if (!videoPlayer.src) {
+
+            alert("Сначала добавь видео.");
+
+            return;
+        }
+
+        if (videoPlayer.paused) {
+
+            videoPlayer.play();
+
+            playButton.textContent =
+                "⏸️ Пауза";
+
+        } else {
+
+            videoPlayer.pause();
+
+            playButton.textContent =
+                "▶️ Воспроизвести";
+
+        }
+
+    }
+);
+
+
+startTimeInput.addEventListener(
+    "change",
+    function() {
+
+        let value =
+            Number(this.value);
+
+        if (value < 0) {
+            value = 0;
+        }
+
+        if (value >= trimEnd) {
+
+            value =
+                Math.max(
+                    0,
+                    trimEnd - 0.1
+                );
+
+        }
+
+        trimStart = value;
+
+        this.value =
+            value.toFixed(1);
+
+    }
+);
+
+
+endTimeInput.addEventListener(
+    "change",
+    function() {
+
+        let value =
+            Number(this.value);
+
+        if (value > videoDuration) {
+
+            value =
+                videoDuration;
+
+        }
+
+        if (value <= trimStart) {
+
+            value =
+                Math.min(
+                    videoDuration,
+                    trimStart + 0.1
+                );
+
+        }
+
+        trimEnd = value;
+
+        this.value =
+            value.toFixed(1);
+
+    }
+);
+
+
+trimButton.addEventListener(
+    "click",
+    function() {
+
+        if (!videoPlayer.src) {
+
+            alert("Сначала добавь видео.");
+
+            return;
+        }
+
+        trimStart =
+            Number(startTimeInput.value);
+
+        trimEnd =
+            Number(endTimeInput.value);
+
+        if (trimStart >= trimEnd) {
+
+            alert(
+                "Начало должно быть меньше конца."
+            );
+
+            return;
+        }
+
+        videoPlayer.currentTime =
+            trimStart;
+
+        message.textContent =
+            "Обрезка установлена: "
+            + formatTime(trimStart)
+            + " — "
+            + formatTime(trimEnd);
+
+    }
+);
+
+
+exportButton.addEventListener(
+    "click",
+    function() {
+
+        if (!videoPlayer.src) {
+
+            alert("Сначала добавь видео.");
+
+            return;
+        }
+
+        alert(
+            "🎬 Экспорт подключим следующим шагом."
+        );
+
+    }
+);
+
 </script>
 
 </body>
