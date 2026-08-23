@@ -2,1136 +2,1722 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>AlexCut — Видеоредактор</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>AlexCut — Professional Video Editor</title>
 
 <style>
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:#09090d;color:#fff;font-family:Arial,Helvetica,sans-serif}
+body{overflow:hidden}
+
+:root{
+ --bg:#09090d;
+ --panel:#111117;
+ --panel2:#17171f;
+ --line:#292934;
+ --text:#fff;
+ --muted:#92929e;
+ --accent:#8b5cf6;
+ --accent2:#a855f7;
+ --pink:#ec4899;
 }
 
-body{
-  margin:0;
-  background:#0b0b0f;
-  color:#fff;
-  font-family:Arial,sans-serif;
-  overflow-x:hidden;
-}
-
-header{
-  height:58px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 15px;
-  background:#15151c;
-  border-bottom:1px solid #292932;
-}
-
-.logo{
-  font-size:22px;
-  font-weight:bold;
-}
-
-.logo span{
-  color:#8b5cf6;
-}
-
-.exportTop{
-  background:#8b5cf6;
-  border:0;
-  color:white;
-  padding:10px 16px;
-  border-radius:10px;
-  font-weight:bold;
-}
+button,input{font:inherit}
+button{cursor:pointer}
 
 .app{
-  display:flex;
-  min-height:calc(100vh - 58px);
+ height:100vh;
+ display:flex;
+ flex-direction:column;
 }
 
-.sidebar{
-  width:82px;
-  background:#121219;
-  border-right:1px solid #292932;
-  display:flex;
-  flex-direction:column;
-  padding:8px 5px;
-  gap:5px;
+/* HEADER */
+
+.header{
+ height:58px;
+ flex-shrink:0;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ padding:0 16px;
+ background:#101016;
+ border-bottom:1px solid var(--line);
+}
+
+.brand{
+ display:flex;
+ align-items:center;
+ gap:9px;
+ font-size:21px;
+ font-weight:800;
+}
+
+.brandMark{
+ width:34px;
+ height:34px;
+ border-radius:10px;
+ background:linear-gradient(135deg,#8b5cf6,#ec4899);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:17px;
+}
+
+.brand span{color:#a78bfa}
+
+.headerRight{
+ display:flex;
+ align-items:center;
+ gap:8px;
+}
+
+.iconBtn{
+ border:1px solid var(--line);
+ background:#1a1a22;
+ color:#ddd;
+ width:38px;
+ height:36px;
+ border-radius:9px;
+}
+
+.exportBtn{
+ border:0;
+ color:#fff;
+ background:linear-gradient(135deg,#7c3aed,#a855f7);
+ padding:10px 17px;
+ border-radius:9px;
+ font-weight:700;
+ box-shadow:0 4px 15px #7c3aed33;
+}
+
+/* MAIN */
+
+.workspace{
+ flex:1;
+ min-height:0;
+ display:flex;
+}
+
+/* LEFT */
+
+.leftbar{
+ width:76px;
+ flex-shrink:0;
+ background:#0f0f15;
+ border-right:1px solid var(--line);
+ padding:8px 5px;
+ display:flex;
+ flex-direction:column;
+ gap:4px;
 }
 
 .tool{
-  border:0;
-  background:transparent;
-  color:#aaa;
-  padding:10px 2px;
-  border-radius:10px;
-  font-size:11px;
+ width:100%;
+ border:0;
+ background:transparent;
+ color:#858590;
+ border-radius:10px;
+ padding:9px 3px;
+ font-size:10px;
 }
 
-.tool.active,
-.tool:active{
-  background:#272035;
-  color:#fff;
+.tool:hover,
+.tool.active{
+ background:#292038;
+ color:#fff;
 }
 
 .toolIcon{
-  display:block;
-  font-size:23px;
-  margin-bottom:4px;
+ display:block;
+ font-size:21px;
+ margin-bottom:4px;
 }
 
-.main{
-  flex:1;
-  min-width:0;
-  display:flex;
-  flex-direction:column;
+/* CENTER */
+
+.center{
+ flex:1;
+ min-width:0;
+ min-height:0;
+ display:flex;
+ flex-direction:column;
+ background:#08080c;
 }
 
 .preview{
-  height:48vh;
-  min-height:280px;
-  background:#050507;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  position:relative;
-  overflow:hidden;
+ flex:1;
+ min-height:0;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ position:relative;
+ overflow:hidden;
+ background:
+ radial-gradient(circle at 50% 45%,#17131f 0,#09090d 45%,#050508 100%);
 }
 
-.videoWrap{
-  position:relative;
-  max-width:92%;
-  max-height:92%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+.canvas{
+ width:min(72vw,650px);
+ height:min(68vh,520px);
+ position:relative;
+ display:flex;
+ align-items:center;
+ justify-content:center;
 }
 
 #video{
-  max-width:100%;
-  max-height:42vh;
-  display:none;
-  transform-origin:center center;
-  background:#000;
+ max-width:100%;
+ max-height:100%;
+ display:none;
+ background:#000;
+ transform-origin:center center;
+ box-shadow:0 10px 45px #000;
 }
 
-#empty{
-  text-align:center;
-  color:#777;
+.empty{
+ text-align:center;
+ color:#777784;
 }
 
-#empty .big{
-  font-size:55px;
-  margin-bottom:10px;
+.emptyIcon{
+ width:76px;
+ height:76px;
+ margin:auto;
+ border-radius:22px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ background:#171720;
+ border:1px solid #2c2c38;
+ font-size:38px;
 }
 
-#textOverlay{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  font-size:28px;
-  font-weight:bold;
-  color:white;
-  text-shadow:0 2px 5px #000;
-  display:none;
-  pointer-events:none;
-  white-space:nowrap;
+.empty h2{
+ margin:13px 0 5px;
+ color:#ddd;
+ font-size:19px;
 }
 
-.controls{
-  height:52px;
-  background:#121219;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:12px;
-  border-top:1px solid #292932;
-  border-bottom:1px solid #292932;
+.empty p{
+ margin:0;
+ font-size:12px;
 }
 
-.controlBtn{
-  width:42px;
-  height:38px;
-  border:0;
-  border-radius:10px;
-  background:#25252e;
-  color:#fff;
-  font-size:18px;
+/* TEXT */
+
+.textLayer{
+ position:absolute;
+ left:50%;
+ top:50%;
+ transform:translate(-50%,-50%);
+ display:none;
+ font-weight:800;
+ font-size:34px;
+ color:white;
+ text-align:center;
+ white-space:nowrap;
+ text-shadow:0 3px 12px #000;
+ pointer-events:none;
+}
+
+/* PLAYBAR */
+
+.playbar{
+ height:54px;
+ flex-shrink:0;
+ border-top:1px solid var(--line);
+ background:#111117;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:12px;
+}
+
+.play{
+ width:42px;
+ height:38px;
+ border:0;
+ border-radius:50%;
+ background:#fff;
+ color:#111;
+ font-size:17px;
+}
+
+.smallCtrl{
+ width:34px;
+ height:34px;
+ border:0;
+ background:#20202a;
+ color:#ccc;
+ border-radius:8px;
 }
 
 .time{
-  font-size:12px;
-  color:#aaa;
-  min-width:110px;
-  text-align:center;
+ color:#999;
+ font-size:12px;
+ min-width:110px;
+ text-align:center;
+}
+
+/* RIGHT PANEL */
+
+.right{
+ width:300px;
+ flex-shrink:0;
+ background:#111117;
+ border-left:1px solid var(--line);
+ overflow:auto;
 }
 
 .panel{
-  padding:12px;
-  background:#15151c;
-  border-bottom:1px solid #292932;
-  display:none;
+ display:none;
+ padding:15px;
 }
 
-.panel.active{
-  display:block;
+.panel.active{display:block}
+
+.panelTitle{
+ font-size:17px;
+ font-weight:700;
+ margin-bottom:15px;
 }
 
-.panel h3{
-  margin:0 0 12px;
-  font-size:16px;
+.upload{
+ border:1px dashed #494953;
+ border-radius:12px;
+ padding:20px 10px;
+ text-align:center;
+ color:#999;
+}
+
+.fileBtn{
+ display:inline-block;
+ margin-top:10px;
+ background:#7c3aed;
+ color:#fff;
+ padding:10px 15px;
+ border-radius:9px;
+ font-weight:700;
+}
+
+.fileBtn input{display:none}
+
+.section{
+ border-top:1px solid var(--line);
+ padding-top:14px;
+ margin-top:14px;
+}
+
+.label{
+ color:#9b9ba6;
+ font-size:11px;
+ margin-bottom:7px;
+}
+
+input[type=text]{
+ width:100%;
+ padding:10px;
+ border:1px solid #34343f;
+ border-radius:8px;
+ outline:none;
+ background:#1b1b23;
+ color:#fff;
+}
+
+input[type=range]{
+ width:100%;
+ accent-color:#8b5cf6;
 }
 
 .row{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin:10px 0;
+ display:flex;
+ align-items:center;
+ gap:8px;
+ margin:10px 0;
 }
 
-.row label{
-  width:80px;
-  font-size:13px;
-  color:#aaa;
-}
-
-input[type="range"]{
-  flex:1;
-  accent-color:#8b5cf6;
-}
-
-input[type="text"],
-input[type="number"]{
-  width:100%;
-  background:#24242d;
-  color:#fff;
-  border:1px solid #383842;
-  padding:10px;
-  border-radius:8px;
-  outline:none;
+.value{
+ margin-left:auto;
+ color:#aaa;
+ font-size:11px;
 }
 
 .action{
-  border:0;
-  background:#8b5cf6;
-  color:white;
-  padding:10px 15px;
-  border-radius:9px;
-  font-weight:bold;
+ border:0;
+ padding:9px 12px;
+ border-radius:8px;
+ background:#24242e;
+ color:#fff;
 }
 
-.secondary{
-  background:#292932;
+.action.primary{
+ background:#7c3aed;
 }
+
+.action.danger{
+ background:#552033;
+ color:#ffb4ca;
+}
+
+.actions{
+ display:flex;
+ gap:7px;
+ flex-wrap:wrap;
+}
+
+/* MUSIC */
+
+.search{
+ display:flex;
+ gap:7px;
+}
+
+.search input{flex:1}
+
+.musicList{
+ margin-top:12px;
+ display:flex;
+ flex-direction:column;
+ gap:7px;
+}
+
+.song{
+ background:#1b1b23;
+ border:1px solid #292934;
+ border-radius:9px;
+ padding:9px;
+ display:flex;
+ align-items:center;
+ gap:9px;
+}
+
+.songCover{
+ width:38px;
+ height:38px;
+ border-radius:7px;
+ background:linear-gradient(135deg,#7c3aed,#ec4899);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+
+.songInfo{
+ flex:1;
+ min-width:0;
+}
+
+.songName{
+ font-size:12px;
+ white-space:nowrap;
+ overflow:hidden;
+ text-overflow:ellipsis;
+}
+
+.songType{
+ color:#777;
+ font-size:10px;
+ margin-top:3px;
+}
+
+.song button{
+ width:31px;
+ height:31px;
+ border:0;
+ border-radius:7px;
+ background:#292934;
+ color:#fff;
+}
+
+/* FILTERS */
+
+.filters{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:7px;
+}
+
+.filter{
+ border:1px solid #30303a;
+ background:#1b1b23;
+ color:#ddd;
+ padding:11px 5px;
+ border-radius:9px;
+}
+
+.filter.active{
+ border-color:#8b5cf6;
+ background:#302044;
+}
+
+/* TIMELINE */
 
 .timeline{
-  background:#0d0d12;
-  padding:10px;
-  overflow:hidden;
+ height:220px;
+ flex-shrink:0;
+ background:#0e0e13;
+ border-top:1px solid var(--line);
+ padding:10px 13px;
+ overflow:hidden;
 }
 
-.timelineHeader{
-  display:flex;
-  justify-content:space-between;
-  color:#888;
-  font-size:11px;
-  margin-bottom:7px;
+.timelineTop{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:8px;
+}
+
+.timelineTitle{
+ font-size:11px;
+ font-weight:700;
+ color:#aaa;
+}
+
+.timelineTools{
+ display:flex;
+ gap:5px;
+}
+
+.timelineTools button{
+ border:0;
+ background:#1d1d25;
+ color:#aaa;
+ border-radius:6px;
+ width:29px;
+ height:27px;
+}
+
+.trackName{
+ color:#74747e;
+ font-size:9px;
+ margin:5px 0 3px;
 }
 
 .track{
-  height:54px;
-  background:#191921;
-  border-radius:8px;
-  position:relative;
-  overflow:hidden;
-  border:1px solid #292932;
+ height:47px;
+ width:100%;
+ position:relative;
+ background:#17171e;
+ border:1px solid #292933;
+ border-radius:7px;
+ overflow:hidden;
 }
 
 .clip{
-  position:absolute;
-  top:7px;
-  bottom:7px;
-  left:0;
-  right:0;
-  background:linear-gradient(90deg,#5b21b6,#8b5cf6);
-  border-radius:6px;
+ position:absolute;
+ top:5px;
+ bottom:5px;
+ left:0;
+ right:0;
+ border-radius:5px;
+ background:
+ repeating-linear-gradient(
+  90deg,
+  #7c3aed 0,
+  #7c3aed 48px,
+  #8b5cf6 49px,
+  #8b5cf6 50px
+ );
+}
+
+.audioClip{
+ position:absolute;
+ left:0;
+ right:20%;
+ top:5px;
+ bottom:5px;
+ border-radius:5px;
+ background:
+ repeating-linear-gradient(
+  90deg,
+  #075985 0,
+  #075985 45px,
+  #0ea5e9 46px,
+  #0ea5e9 48px
+ );
+}
+
+.textClip{
+ position:absolute;
+ left:20%;
+ right:25%;
+ top:5px;
+ bottom:5px;
+ border-radius:5px;
+ background:#9f1239;
 }
 
 .handle{
-  position:absolute;
-  top:0;
-  bottom:0;
-  width:20px;
-  background:#fff;
-  z-index:4;
-  touch-action:none;
+ position:absolute;
+ top:0;
+ bottom:0;
+ width:20px;
+ background:#fff;
+ z-index:5;
+ touch-action:none;
 }
 
 .handle.left{
-  left:0;
-  border-radius:6px 0 0 6px;
+ left:0;
+ border-radius:5px 0 0 5px;
 }
 
 .handle.right{
-  right:0;
-  border-radius:0 6px 6px 0;
+ right:0;
+ border-radius:0 5px 5px 0;
 }
 
 .handle:after{
-  content:"";
-  position:absolute;
-  top:19px;
-  left:7px;
-  width:5px;
-  height:16px;
-  background:#8b5cf6;
-  border-radius:3px;
+ content:"";
+ position:absolute;
+ width:4px;
+ height:16px;
+ border-radius:4px;
+ background:#7c3aed;
+ left:8px;
+ top:15px;
 }
 
 .playhead{
+ position:absolute;
+ top:0;
+ bottom:0;
+ width:2px;
+ background:#f43f5e;
+ z-index:10;
+ pointer-events:none;
+}
+
+/* MOBILE */
+
+@media(max-width:850px){
+
+ .right{
   position:absolute;
-  top:0;
+  z-index:30;
+  right:0;
+  top:58px;
   bottom:0;
-  width:2px;
-  background:#ff3b81;
-  left:0;
-  z-index:5;
-  pointer-events:none;
+  width:min(88vw,330px);
+  transform:translateX(100%);
+  transition:.25s;
+  box-shadow:-20px 0 50px #0008;
+ }
+
+ .right.open{
+  transform:translateX(0);
+ }
+
+ .leftbar{
+  width:66px;
+ }
+
+ .canvas{
+  width:90vw;
+  height:52vh;
+ }
+
+ .timeline{
+  height:205px;
+ }
+
+ .header{
+  padding:0 9px;
+ }
+
+ .brand{
+  font-size:18px;
+ }
+
+ .exportBtn{
+  padding:8px 11px;
+  font-size:12px;
+ }
 }
 
-.trackLabel{
-  font-size:10px;
-  color:#888;
-  margin:7px 0 3px;
-}
+@media(max-width:520px){
 
-.uploadArea{
-  border:1px dashed #555565;
-  border-radius:10px;
-  padding:14px;
-  text-align:center;
-  margin-bottom:10px;
-}
+ .toolIcon{font-size:19px}
+ .tool{font-size:9px}
 
-.uploadArea input{
-  display:none;
-}
+ .preview{
+  min-height:0;
+ }
 
-.uploadButton{
-  display:inline-block;
-  padding:10px 14px;
-  background:#8b5cf6;
-  border-radius:8px;
-  font-weight:bold;
-}
+ .timeline{
+  height:190px;
+  padding:8px;
+ }
 
-.filters{
-  display:flex;
-  gap:7px;
-  flex-wrap:wrap;
-}
-
-.filterBtn{
-  background:#292932;
-  color:#fff;
-  border:0;
-  padding:9px 12px;
-  border-radius:8px;
-}
-
-.filterBtn.active{
-  background:#8b5cf6;
-}
-
-.bottomInfo{
-  padding:8px 12px;
-  color:#666;
-  font-size:11px;
-  text-align:center;
-}
-
-@media(max-width:700px){
-  .sidebar{
-    width:70px;
-  }
-
-  .preview{
-    height:38vh;
-    min-height:230px;
-  }
-
-  #video{
-    max-height:34vh;
-  }
-
-  .tool{
-    font-size:10px;
-  }
-
-  .toolIcon{
-    font-size:20px;
-  }
+ .playbar{
+  height:50px;
+ }
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <div class="logo">Alex<span>Cut</span></div>
-  <button class="exportTop" onclick="exportVideo()">💾 Экспорт</button>
-</header>
-
 <div class="app">
 
-  <aside class="sidebar">
+<header class="header">
 
-    <button class="tool active" onclick="openPanel('videoPanel',this)">
-      <span class="toolIcon">🎬</span>
-      Видео
-    </button>
+ <div class="brand">
+  <div class="brandMark">✂</div>
+  Alex<span>Cut</span>
+ </div>
 
-    <button class="tool" onclick="openPanel('trimPanel',this)">
-      <span class="toolIcon">✂️</span>
-      Обрезка
-    </button>
+ <div class="headerRight">
+  <button class="iconBtn" onclick="undo()">↶</button>
+  <button class="iconBtn" onclick="redo()">↷</button>
+  <button class="exportBtn" onclick="exportProject()">💾 Экспорт</button>
+ </div>
 
-    <button class="tool" onclick="openPanel('musicPanel',this)">
-      <span class="toolIcon">🎵</span>
-      Музыка
-    </button>
+</header>
 
-    <button class="tool" onclick="openPanel('textPanel',this)">
-      <span class="toolIcon">📝</span>
-      Текст
-    </button>
+<div class="workspace">
 
-    <button class="tool" onclick="openPanel('effectsPanel',this)">
-      <span class="toolIcon">🎨</span>
-      Эффекты
-    </button>
+<!-- LEFT TOOLS -->
 
-    <button class="tool" onclick="openPanel('transformPanel',this)">
-      <span class="toolIcon">🔄</span>
-      Вид
-    </button>
+<aside class="leftbar">
 
-    <button class="tool" onclick="openPanel('aiPanel',this)">
-      <span class="toolIcon">🤖</span>
-      AI
-    </button>
+ <button class="tool active" onclick="showPanel('video',this)">
+  <span class="toolIcon">🎬</span>
+  Видео
+ </button>
 
-  </aside>
+ <button class="tool" onclick="showPanel('trim',this)">
+  <span class="toolIcon">✂️</span>
+  Обрезка
+ </button>
 
-  <main class="main">
+ <button class="tool" onclick="showPanel('music',this)">
+  <span class="toolIcon">🎵</span>
+  Музыка
+ </button>
 
-    <section class="preview">
+ <button class="tool" onclick="showPanel('text',this)">
+  <span class="toolIcon">T</span>
+  Текст
+ </button>
 
-      <div class="videoWrap">
+ <button class="tool" onclick="showPanel('filters',this)">
+  <span class="toolIcon">🎨</span>
+  Фильтры
+ </button>
 
-        <div id="empty">
-          <div class="big">🎬</div>
-          <div>Загрузи видео</div>
-        </div>
+ <button class="tool" onclick="showPanel('transform',this)">
+  <span class="toolIcon">🔄</span>
+  Вид
+ </button>
 
-        <video id="video" playsinline></video>
+ <button class="tool" onclick="showPanel('audio',this)">
+  <span class="toolIcon">🔊</span>
+  Звук
+ </button>
 
-        <div id="textOverlay"></div>
+ <button class="tool" onclick="showPanel('ai',this)">
+  <span class="toolIcon">🤖</span>
+  AI
+ </button>
 
-      </div>
+</aside>
 
-    </section>
+<!-- CENTER -->
 
-    <section class="controls">
+<main class="center">
 
-      <button class="controlBtn" onclick="video.currentTime=Math.max(startTime,video.currentTime-5)">⏮</button>
+ <section class="preview">
 
-      <button class="controlBtn" id="playBtn" onclick="togglePlay()">▶️</button>
+  <div class="canvas">
 
-      <button class="controlBtn" onclick="video.currentTime=Math.min(endTime,video.currentTime+5)">⏭</button>
+   <div class="empty" id="empty">
 
-      <div class="time">
-        <span id="currentTime">00:00</span>
-        /
-        <span id="duration">00:00</span>
-      </div>
+    <div class="emptyIcon">🎬</div>
 
-    </section>
+    <h2>Добро пожаловать в AlexCut</h2>
 
-    <!-- VIDEO -->
+    <p>Загрузите видео, чтобы начать монтаж</p>
 
-    <section id="videoPanel" class="panel active">
+   </div>
 
-      <h3>🎬 Видео</h3>
+   <video id="video" playsinline></video>
 
-      <div class="uploadArea">
+   <div class="textLayer" id="textLayer">
+    Ваш текст
+   </div>
 
-        <label class="uploadButton">
-          📁 Выбрать видео
-          <input type="file" id="videoInput" accept="video/*">
-        </label>
+  </div>
 
-      </div>
+ </section>
 
-      <div id="fileName" class="bottomInfo">
-        Видео пока не выбрано
-      </div>
+ <section class="playbar">
 
-    </section>
+  <button class="smallCtrl" onclick="skip(-5)">⏮</button>
 
-    <!-- TRIM -->
+  <button class="play" id="playBtn" onclick="togglePlay()">▶</button>
 
-    <section id="trimPanel" class="panel">
+  <button class="smallCtrl" onclick="skip(5)">⏭</button>
 
-      <h3>✂️ Обрезка</h3>
+  <div class="time">
+   <span id="current">00:00</span>
+   /
+   <span id="duration">00:00</span>
+  </div>
 
-      <div class="row">
-        <label>Начало</label>
-        <span id="startLabel">00:00</span>
-      </div>
+ </section>
 
-      <div class="row">
-        <label>Конец</label>
-        <span id="endLabel">00:00</span>
-      </div>
+ <!-- TIMELINE -->
 
-      <button class="action secondary" onclick="resetTrim()">
-        ↩️ Сбросить обрезку
-      </button>
+ <section class="timeline">
 
-    </section>
+  <div class="timelineTop">
 
-    <!-- MUSIC -->
+   <div class="timelineTitle">
+    TIMELINE
+   </div>
 
-    <section id="musicPanel" class="panel">
+   <div class="timelineTools">
+    <button onclick="zoomTimeline(1)">＋</button>
+    <button onclick="zoomTimeline(-1)">−</button>
+    <button onclick="alert('Настройки таймлайна будут здесь.')">⚙</button>
+   </div>
 
-      <h3>🎵 Музыка</h3>
+  </div>
 
-      <div class="uploadArea">
+  <div class="trackName">🎬 VIDEO</div>
 
-        <label class="uploadButton">
-          🎵 Добавить музыку
-          <input type="file" id="musicInput" accept="audio/*">
-        </label>
+  <div class="track" id="videoTrack">
 
-      </div>
+   <div class="clip" id="videoClip">
 
-      <div id="musicName" class="bottomInfo">
-        Музыка не добавлена
-      </div>
+    <div class="handle left" id="leftHandle"></div>
 
-      <div class="row">
-        <label>Громкость</label>
-        <input id="musicVolume" type="range" min="0" max="1" step="0.01" value="1">
-      </div>
+    <div class="handle right" id="rightHandle"></div>
 
-    </section>
+   </div>
 
-    <!-- TEXT -->
+   <div class="playhead" id="playhead"></div>
 
-    <section id="textPanel" class="panel">
+  </div>
 
-      <h3>📝 Текст</h3>
+  <div class="trackName">🎵 MUSIC</div>
 
-      <input
-        id="textInput"
-        type="text"
-        placeholder="Напиши текст..."
-        oninput="updateText()"
-      >
+  <div class="track">
+   <div class="audioClip"></div>
+  </div>
 
-      <div class="row">
-        <label>Размер</label>
-        <input
-          id="textSize"
-          type="range"
-          min="12"
-          max="80"
-          value="28"
-          oninput="updateText()"
-        >
-      </div>
+  <div class="trackName">📝 TEXT</div>
 
-      <button class="action secondary" onclick="clearText()">
-        Удалить текст
-      </button>
+  <div class="track">
+   <div class="textClip"></div>
+  </div>
 
-    </section>
+ </section>
 
-    <!-- EFFECTS -->
+</main>
 
-    <section id="effectsPanel" class="panel">
+<!-- RIGHT -->
 
-      <h3>🎨 Фильтры</h3>
+<aside class="right" id="rightPanel">
 
-      <div class="filters">
+ <!-- VIDEO -->
 
-        <button class="filterBtn active" onclick="setFilter('none',this)">
-          Оригинал
-        </button>
+ <section class="panel active" id="panel-video">
 
-        <button class="filterBtn" onclick="setFilter('grayscale(1)',this)">
-          Ч/Б
-        </button>
+  <div class="panelTitle">🎬 Видео</div>
 
-        <button class="filterBtn" onclick="setFilter('sepia(1)',this)">
-          Сепия
-        </button>
+  <div class="upload">
 
-        <button class="filterBtn" onclick="setFilter('contrast(1.5)',this)">
-          Контраст
-        </button>
+   <div style="font-size:32px">📁</div>
 
-        <button class="filterBtn" onclick="setFilter('brightness(1.4)',this)">
-          Яркость
-        </button>
+   <div style="margin-top:8px">
+    Добавьте видео
+   </div>
 
-        <button class="filterBtn" onclick="setFilter('saturate(2)',this)">
-          Цвет
-        </button>
+   <label class="fileBtn">
+    Выбрать видео
+    <input type="file" id="videoInput" accept="video/*">
+   </label>
 
-        <button class="filterBtn" onclick="setFilter('blur(3px)',this)">
-          Размытие
-        </button>
+  </div>
 
-      </div>
+  <div class="section">
 
-    </section>
+   <div class="label">Файл</div>
 
-    <!-- TRANSFORM -->
+   <div id="fileName" style="font-size:12px;color:#aaa">
+    Видео не выбрано
+   </div>
 
-    <section id="transformPanel" class="panel">
+  </div>
 
-      <h3>🔄 Поворот и масштаб</h3>
+ </section>
 
-      <div class="row">
+ <!-- TRIM -->
 
-        <button class="action secondary" onclick="rotateVideo(-90)">
-          ↶ 90°
-        </button>
+ <section class="panel" id="panel-trim">
 
-        <button class="action secondary" onclick="rotateVideo(90)">
-          ↷ 90°
-        </button>
+  <div class="panelTitle">✂️ Обрезка</div>
 
-        <button class="action secondary" onclick="resetTransform()">
-          Сброс
-        </button>
+  <div class="label">Границы клипа</div>
 
-      </div>
+  <div class="row">
+   <span style="font-size:12px">Начало</span>
+   <span class="value" id="startValue">00:00</span>
+  </div>
 
-      <div class="row">
-        <label>Масштаб</label>
-        <input
-          id="scaleRange"
-          type="range"
-          min="0.5"
-          max="2"
-          step="0.01"
-          value="1"
-          oninput="updateTransform()"
-        >
-      </div>
+  <div class="row">
+   <span style="font-size:12px">Конец</span>
+   <span class="value" id="endValue">00:00</span>
+  </div>
 
-      <div class="row">
-        <label>Громкость</label>
-        <input
-          id="volumeRange"
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value="1"
-          oninput="video.volume=this.value"
-        >
-      </div>
+  <div class="section">
 
-    </section>
+   <div class="label">
+    Двигайте белые границы на таймлайне пальцем.
+   </div>
 
-    <!-- AI -->
+   <button class="action primary" onclick="resetTrim()">
+    ↩ Сбросить
+   </button>
 
-    <section id="aiPanel" class="panel">
+  </div>
 
-      <h3>🤖 AI</h3>
+ </section>
 
-      <p style="color:#aaa;font-size:13px;">
-        AI-инструменты подключим следующим этапом.
-      </p>
+ <!-- MUSIC -->
 
-      <button class="action secondary" onclick="alert('AI-субтитры будут добавлены в следующей версии AlexCut.')">
-        ✨ Автоматические субтитры
-      </button>
+ <section class="panel" id="panel-music">
 
-      <button class="action secondary" onclick="alert('AI-удаление фона будет добавлено позже.')">
-        🪄 Удалить фон
-      </button>
+  <div class="panelTitle">🎵 Музыка</div>
 
-    </section>
+  <div class="search">
 
-    <!-- TIMELINE -->
+   <input
+    id="musicSearch"
+    placeholder="🔎 Поиск музыки..."
+    oninput="searchMusic()"
+   >
 
-    <section class="timeline">
+  </div>
 
-      <div class="timelineHeader">
-        <span>ТАЙМЛАЙН</span>
-        <span id="timelineDuration">00:00</span>
-      </div>
+  <div class="musicList" id="musicList">
 
-      <div class="trackLabel">🎬 Видео 1</div>
+   <div class="song" data-name="summer">
 
-      <div class="track" id="videoTrack">
+    <div class="songCover">🎵</div>
 
-        <div class="clip" id="clip">
+    <div class="songInfo">
+     <div class="songName">Summer Dreams</div>
+     <div class="songType">Chill • AlexCut Library</div>
+    </div>
 
-          <div
-            class="handle left"
-            id="leftHandle">
-          </div>
+    <button onclick="previewSong('Summer Dreams')">▶</button>
+    <button onclick="addSong('Summer Dreams')">＋</button>
 
-          <div
-            class="handle right"
-            id="rightHandle">
-          </div>
+   </div>
 
-        </div>
+   <div class="song" data-name="night">
 
-        <div
-          class="playhead"
-          id="playhead">
-        </div>
+    <div class="songCover">🌙</div>
 
-      </div>
+    <div class="songInfo">
+     <div class="songName">Night Drive</div>
+     <div class="songType">Electronic • AlexCut Library</div>
+    </div>
 
-      <div class="trackLabel">🎵 Музыка 1</div>
+    <button onclick="previewSong('Night Drive')">▶</button>
+    <button onclick="addSong('Night Drive')">＋</button>
 
-      <div class="track">
-        <div
-          class="clip"
-          style="background:linear-gradient(90deg,#075985,#0ea5e9);">
-        </div>
-      </div>
+   </div>
 
-      <div class="trackLabel">📝 Текст 1</div>
+   <div class="song" data-name="party">
 
-      <div class="track">
-        <div
-          class="clip"
-          style="background:linear-gradient(90deg,#9f1239,#f43f5e);">
-        </div>
-      </div>
+    <div class="songCover">🔥</div>
 
-    </section>
+    <div class="songInfo">
+     <div class="songName">Friday Party</div>
+     <div class="songType">Dance • AlexCut Library</div>
+    </div>
 
-  </main>
+    <button onclick="previewSong('Friday Party')">▶</button>
+    <button onclick="addSong('Friday Party')">＋</button>
 
+   </div>
+
+   <div class="song" data-name="dream">
+
+    <div class="songCover">✨</div>
+
+    <div class="songInfo">
+     <div class="songName">Dream</div>
+     <div class="songType">Emotional • AlexCut Library</div>
+    </div>
+
+    <button onclick="previewSong('Dream')">▶</button>
+    <button onclick="addSong('Dream')">＋</button>
+
+   </div>
+
+  </div>
+
+  <div class="section">
+
+   <div class="label">
+    Своя музыка
+   </div>
+
+   <label class="fileBtn">
+    📁 MP3
+    <input type="file" id="musicInput" accept="audio/*">
+   </label>
+
+  </div>
+
+ </section>
+
+ <!-- TEXT -->
+
+ <section class="panel" id="panel-text">
+
+  <div class="panelTitle">📝 Текст</div>
+
+  <div class="label">Текст на видео</div>
+
+  <input
+   id="textInput"
+   type="text"
+   placeholder="Напишите текст..."
+   oninput="updateText()"
+  >
+
+  <div class="section">
+
+   <div class="label">Размер</div>
+
+   <input
+    id="textSize"
+    type="range"
+    min="12"
+    max="80"
+    value="34"
+    oninput="updateText()"
+   >
+
+  </div>
+
+  <div class="section">
+
+   <div class="label">Позиция</div>
+
+   <div class="actions">
+
+    <button class="action" onclick="moveText('up')">↑</button>
+    <button class="action" onclick="moveText('down')">↓</button>
+    <button class="action" onclick="moveText('left')">←</button>
+    <button class="action" onclick="moveText('right')">→</button>
+
+   </div>
+
+  </div>
+
+  <div class="section">
+
+   <button class="action danger" onclick="clearText()">
+    Удалить текст
+   </button>
+
+  </div>
+
+ </section>
+
+ <!-- FILTERS -->
+
+ <section class="panel" id="panel-filters">
+
+  <div class="panelTitle">🎨 Фильтры</div>
+
+  <div class="filters">
+
+   <button class="filter active" onclick="filterVideo('none',this)">
+    Оригинал
+   </button>
+
+   <button class="filter" onclick="filterVideo('grayscale(1)',this)">
+    Ч/Б
+   </button>
+
+   <button class="filter" onclick="filterVideo('sepia(1)',this)">
+    Сепия
+   </button>
+
+   <button class="filter" onclick="filterVideo('contrast(1.4)',this)">
+    Контраст
+   </button>
+
+   <button class="filter" onclick="filterVideo('brightness(1.35)',this)">
+    Яркость
+   </button>
+
+   <button class="filter" onclick="filterVideo('saturate(1.8)',this)">
+    Насыщенность
+   </button>
+
+   <button class="filter" onclick="filterVideo('blur(2px)',this)">
+    Blur
+   </button>
+
+  </div>
+
+ </section>
+
+ <!-- TRANSFORM -->
+
+ <section class="panel" id="panel-transform">
+
+  <div class="panelTitle">🔄 Трансформация</div>
+
+  <div class="actions">
+
+   <button class="action" onclick="rotate(-90)">↶ 90°</button>
+
+   <button class="action" onclick="rotate(90)">↷ 90°</button>
+
+   <button class="action" onclick="resetTransform()">Сброс</button>
+
+  </div>
+
+  <div class="section">
+
+   <div class="label">
+    Масштаб
+   </div>
+
+   <input
+    id="scale"
+    type="range"
+    min=".5"
+    max="2"
+    step=".01"
+    value="1"
+    oninput="transformVideo()"
+   >
+
+  </div>
+
+ </section>
+
+ <!-- AUDIO -->
+
+ <section class="panel" id="panel-audio">
+
+  <div class="panelTitle">🔊 Звук</div>
+
+  <div class="label">Громкость видео</div>
+
+  <input
+   id="volume"
+   type="range"
+   min="0"
+   max="1"
+   step=".01"
+   value="1"
+   oninput="changeVolume()"
+  >
+
+  <div class="section">
+
+   <div class="label">Музыка</div>
+
+   <input
+    id="musicVolume"
+    type="range"
+    min="0"
+    max="1"
+    step=".01"
+    value="1"
+   >
+
+  </div>
+
+ </section>
+
+ <!-- AI -->
+
+ <section class="panel" id="panel-ai">
+
+  <div class="panelTitle">🤖 Alex AI</div>
+
+  <div style="color:#999;font-size:12px;line-height:1.5">
+   Здесь будет настоящий AI-раздел AlexCut.
+  </div>
+
+  <div class="section">
+
+   <button
+    class="action primary"
+    onclick="aiDemo('Автоматические субтитры')">
+    ✨ Автосубтитры
+   </button>
+
+  </div>
+
+  <div class="section">
+
+   <button
+    class="action primary"
+    onclick="aiDemo('Удаление фона')">
+    🪄 Удаление фона
+   </button>
+
+  </div>
+
+  <div class="section">
+
+   <button
+    class="action primary"
+    onclick="aiDemo('Улучшение качества')">
+    🚀 Улучшить видео
+   </button>
+
+  </div>
+
+ </section>
+
+</aside>
+
+</div>
 </div>
 
 <script>
 
-const video = document.getElementById("video");
-const empty = document.getElementById("empty");
-const playBtn = document.getElementById("playBtn");
-const currentTimeEl = document.getElementById("currentTime");
-const durationEl = document.getElementById("duration");
-const timelineDuration = document.getElementById("timelineDuration");
-const playhead = document.getElementById("playhead");
+const video=document.getElementById("video");
+const empty=document.getElementById("empty");
+const videoInput=document.getElementById("videoInput");
+const videoTrack=document.getElementById("videoTrack");
+const videoClip=document.getElementById("videoClip");
+const leftHandle=document.getElementById("leftHandle");
+const rightHandle=document.getElementById("rightHandle");
+const playhead=document.getElementById("playhead");
 
-const leftHandle = document.getElementById("leftHandle");
-const rightHandle = document.getElementById("rightHandle");
-const clip = document.getElementById("clip");
-const videoTrack = document.getElementById("videoTrack");
+let startTime=0;
+let endTime=0;
+let rotation=0;
+let textX=50;
+let textY=50;
+let history=[];
+let historyIndex=-1;
 
-let startTime = 0;
-let endTime = 0;
-let rotation = 0;
-let scale = 1;
-let music = null;
-let musicURL = null;
+const audio=new Audio();
+audio.loop=true;
 
-const audio = new Audio();
-audio.loop = false;
+/* PANELS */
 
-function openPanel(id, button){
+function showPanel(name,button){
 
-  document.querySelectorAll(".panel").forEach(panel=>{
-    panel.classList.remove("active");
-  });
+ document.querySelectorAll(".panel")
+ .forEach(p=>p.classList.remove("active"));
 
-  document.getElementById(id).classList.add("active");
+ document.getElementById("panel-"+name)
+ .classList.add("active");
 
-  document.querySelectorAll(".tool").forEach(tool=>{
-    tool.classList.remove("active");
-  });
+ document.querySelectorAll(".tool")
+ .forEach(t=>t.classList.remove("active"));
 
-  button.classList.add("active");
+ button.classList.add("active");
+
+ if(window.innerWidth<=850){
+  document.getElementById("rightPanel").classList.add("open");
+ }
 }
 
-function formatTime(seconds){
+/* VIDEO */
 
-  if(!isFinite(seconds)) return "00:00";
+videoInput.addEventListener("change",function(){
 
-  seconds = Math.max(0,seconds);
+ const file=this.files[0];
 
-  const minutes = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
+ if(!file)return;
 
-  return String(minutes).padStart(2,"0") + ":" +
-         String(secs).padStart(2,"0");
-}
+ video.src=URL.createObjectURL(file);
 
-document.getElementById("videoInput").addEventListener("change",function(){
+ video.style.display="block";
+ empty.style.display="none";
 
-  const file = this.files[0];
+ document.getElementById("fileName").textContent=file.name;
 
-  if(!file) return;
+ video.load();
 
-  const url = URL.createObjectURL(file);
-
-  video.src = url;
-  video.style.display = "block";
-  empty.style.display = "none";
-
-  document.getElementById("fileName").textContent = file.name;
-
-  video.load();
+ saveState();
 
 });
 
 video.addEventListener("loadedmetadata",function(){
 
-  endTime = video.duration;
+ startTime=0;
+ endTime=video.duration;
 
-  startTime = 0;
-
-  durationEl.textContent = formatTime(video.duration);
-  timelineDuration.textContent = formatTime(video.duration);
-
-  document.getElementById("startLabel").textContent =
-    formatTime(startTime);
-
-  document.getElementById("endLabel").textContent =
-    formatTime(endTime);
-
-  updateHandles();
+ updateTimeline();
 
 });
 
 video.addEventListener("timeupdate",function(){
 
-  currentTimeEl.textContent = formatTime(video.currentTime);
+ document.getElementById("current").textContent=format(video.currentTime);
+ document.getElementById("duration").textContent=format(video.duration);
 
-  if(video.currentTime >= endTime && !video.paused){
+ if(video.currentTime>=endTime){
 
-    video.pause();
-    video.currentTime = startTime;
+  video.pause();
+  video.currentTime=startTime;
 
-  }
+ }
 
-  updatePlayhead();
+ updatePlayhead();
 
 });
+
+function format(sec){
+
+ if(!isFinite(sec))return"00:00";
+
+ let m=Math.floor(sec/60);
+ let s=Math.floor(sec%60);
+
+ return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+
+}
+
+/* PLAY */
 
 function togglePlay(){
 
-  if(!video.src){
+ if(!video.src){
 
-    alert("Сначала загрузи видео.");
+  alert("Сначала добавьте видео.");
 
-    return;
-  }
+  return;
 
-  if(video.paused){
+ }
 
-    if(video.currentTime < startTime ||
-       video.currentTime >= endTime){
+ if(video.paused){
 
-      video.currentTime = startTime;
+  if(video.currentTime<startTime ||
+     video.currentTime>=endTime){
 
-    }
-
-    video.play();
-
-    if(music){
-      audio.currentTime = Math.max(0,video.currentTime-startTime);
-      audio.play().catch(()=>{});
-    }
-
-    playBtn.textContent = "⏸";
-
-  }else{
-
-    video.pause();
-    audio.pause();
-
-    playBtn.textContent = "▶️";
+   video.currentTime=startTime;
 
   }
+
+  video.play();
+
+  if(audio.src){
+   audio.currentTime=Math.max(0,video.currentTime-startTime);
+   audio.play().catch(()=>{});
+  }
+
+  document.getElementById("playBtn").textContent="Ⅱ";
+
+ }else{
+
+  video.pause();
+  audio.pause();
+
+  document.getElementById("playBtn").textContent="▶";
+
+ }
 
 }
 
-video.addEventListener("pause",()=>{
-  playBtn.textContent = "▶️";
-});
+function skip(seconds){
 
-video.addEventListener("play",()=>{
-  playBtn.textContent = "⏸";
-});
+ if(!video.duration)return;
+
+ video.currentTime=Math.max(
+  startTime,
+  Math.min(endTime,video.currentTime+seconds)
+ );
+
+}
+
+/* TIMELINE */
+
+function updateTimeline(){
+
+ if(!video.duration)return;
+
+ videoClip.style.left=(startTime/video.duration*100)+"%";
+ videoClip.style.right=(100-endTime/video.duration*100)+"%";
+
+ document.getElementById("startValue").textContent=format(startTime);
+ document.getElementById("endValue").textContent=format(endTime);
+
+ updatePlayhead();
+
+}
 
 function updatePlayhead(){
 
-  if(!video.duration) return;
+ if(!video.duration)return;
 
-  const percent =
-    (video.currentTime / video.duration) * 100;
-
-  playhead.style.left = percent + "%";
+ playhead.style.left=
+  (video.currentTime/video.duration*100)+"%";
 
 }
 
-function updateHandles(){
+function positionToTime(x){
 
-  if(!video.duration) return;
+ const rect=videoTrack.getBoundingClientRect();
 
-  const left =
-    (startTime / video.duration) * 100;
+ let percent=(x-rect.left)/rect.width;
 
-  const right =
-    (endTime / video.duration) * 100;
+ percent=Math.max(0,Math.min(1,percent));
 
-  clip.style.left = left + "%";
-  clip.style.right = (100-right) + "%";
-
-  document.getElementById("startLabel").textContent =
-    formatTime(startTime);
-
-  document.getElementById("endLabel").textContent =
-    formatTime(endTime);
+ return percent*video.duration;
 
 }
 
-function pointerToTime(clientX){
+function dragHandle(type){
 
-  const rect = videoTrack.getBoundingClientRect();
+ function move(e){
 
-  let percent =
-    (clientX - rect.left) / rect.width;
+  e.preventDefault();
 
-  percent = Math.max(0,Math.min(1,percent));
+  let p=e.touches?e.touches[0]:e;
 
-  return percent * video.duration;
+  let t=positionToTime(p.clientX);
 
-}
+  if(type==="left"){
 
-function dragHandle(handle,type){
+   startTime=Math.max(
+    0,
+    Math.min(t,endTime-.1)
+   );
 
-  function move(e){
+  }else{
 
-    const point =
-      e.touches ? e.touches[0] : e;
-
-    const time =
-      pointerToTime(point.clientX);
-
-    if(type === "left"){
-
-      startTime =
-        Math.max(0,Math.min(time,endTime-0.1));
-
-      if(video.currentTime < startTime){
-
-        video.currentTime = startTime;
-
-      }
-
-    }else{
-
-      endTime =
-        Math.min(video.duration,
-          Math.max(time,startTime+0.1));
-
-      if(video.currentTime > endTime){
-
-        video.currentTime = endTime;
-
-      }
-
-    }
-
-    updateHandles();
-    updatePlayhead();
+   endTime=Math.min(
+    video.duration,
+    Math.max(t,startTime+.1)
+   );
 
   }
 
-  function stop(){
+  updateTimeline();
 
-    document.removeEventListener("mousemove",move);
-    document.removeEventListener("mouseup",stop);
+ }
 
-    document.removeEventListener("touchmove",move);
-    document.removeEventListener("touchend",stop);
+ function stop(){
 
-  }
+  document.removeEventListener("mousemove",move);
+  document.removeEventListener("mouseup",stop);
+  document.removeEventListener("touchmove",move);
+  document.removeEventListener("touchend",stop);
 
-  document.addEventListener("mousemove",move);
-  document.addEventListener("mouseup",stop);
+  saveState();
 
-  document.addEventListener("touchmove",move,{passive:false});
-  document.addEventListener("touchend",stop);
+ }
+
+ document.addEventListener("mousemove",move);
+ document.addEventListener("mouseup",stop);
+ document.addEventListener("touchmove",move,{passive:false});
+ document.addEventListener("touchend",stop);
 
 }
 
 leftHandle.addEventListener("mousedown",e=>{
-  e.preventDefault();
-  dragHandle(leftHandle,"left");
+ e.preventDefault();
+ dragHandle("left");
 });
 
 rightHandle.addEventListener("mousedown",e=>{
-  e.preventDefault();
-  dragHandle(rightHandle,"right");
+ e.preventDefault();
+ dragHandle("right");
 });
 
 leftHandle.addEventListener("touchstart",e=>{
-  e.preventDefault();
-  dragHandle(leftHandle,"left");
+ e.preventDefault();
+ dragHandle("left");
 },{passive:false});
 
 rightHandle.addEventListener("touchstart",e=>{
-  e.preventDefault();
-  dragHandle(rightHandle,"right");
+ e.preventDefault();
+ dragHandle("right");
 },{passive:false});
 
 videoTrack.addEventListener("click",function(e){
 
-  if(e.target.classList.contains("handle")) return;
+ if(e.target.classList.contains("handle"))return;
 
-  if(!video.duration) return;
+ if(!video.duration)return;
 
-  video.currentTime =
-    pointerToTime(e.clientX);
+ video.currentTime=positionToTime(e.clientX);
 
 });
+
+/* TRIM */
 
 function resetTrim(){
 
-  if(!video.duration) return;
+ if(!video.duration)return;
 
-  startTime = 0;
-  endTime = video.duration;
+ startTime=0;
+ endTime=video.duration;
 
-  updateHandles();
+ updateTimeline();
+
+ saveState();
 
 }
 
-document.getElementById("musicInput")
-.addEventListener("change",function(){
+/* MUSIC */
 
-  const file = this.files[0];
+const musicInput=document.getElementById("musicInput");
 
-  if(!file) return;
+musicInput.addEventListener("change",function(){
 
-  musicURL = URL.createObjectURL(file);
+ const file=this.files[0];
 
-  audio.src = musicURL;
+ if(!file)return;
 
-  music = true;
+ audio.src=URL.createObjectURL(file);
 
-  document.getElementById("musicName").textContent =
-    file.name;
+ alert("Музыка добавлена на дорожку AlexCut.");
 
-});
-
-document.getElementById("musicVolume")
-.addEventListener("input",function(){
-
-  audio.volume = this.value;
+ saveState();
 
 });
+
+function previewSong(name){
+
+ alert(
+  "Демо-библиотека AlexCut: "+name+
+  "\n\nВ полноценной версии здесь будет настоящее воспроизведение лицензированного трека."
+ );
+
+}
+
+function addSong(name){
+
+ alert(
+  "🎵 "+name+
+  " добавлена на музыкальную дорожку."
+ );
+
+}
+
+function searchMusic(){
+
+ const q=document.getElementById("musicSearch")
+ .value.toLowerCase();
+
+ document.querySelectorAll(".song")
+ .forEach(song=>{
+
+  song.style.display=
+   song.dataset.name.includes(q)
+   ?"flex"
+   :"none";
+
+ });
+
+}
+
+/* TEXT */
 
 function updateText(){
 
-  const text =
-    document.getElementById("textInput").value;
+ const text=document.getElementById("textInput").value;
+ const size=document.getElementById("textSize").value;
+ const layer=document.getElementById("textLayer");
 
-  const size =
-    document.getElementById("textSize").value;
+ layer.textContent=text||"Ваш текст";
+ layer.style.fontSize=size+"px";
+ layer.style.display=text?"block":"none";
 
-  const overlay =
-    document.getElementById("textOverlay");
+}
 
-  overlay.textContent = text;
+function moveText(direction){
 
-  overlay.style.fontSize = size + "px";
+ if(direction==="up")textY-=3;
+ if(direction==="down")textY+=3;
+ if(direction==="left")textX-=3;
+ if(direction==="right")textX+=3;
 
-  overlay.style.display =
-    text ? "block" : "none";
+ textX=Math.max(10,Math.min(90,textX));
+ textY=Math.max(10,Math.min(90,textY));
+
+ const layer=document.getElementById("textLayer");
+
+ layer.style.left=textX+"%";
+ layer.style.top=textY+"%";
 
 }
 
 function clearText(){
 
-  document.getElementById("textInput").value = "";
-
-  updateText();
-
-}
-
-function setFilter(filter,button){
-
-  video.style.filter = filter;
-
-  document.querySelectorAll(".filterBtn")
-    .forEach(btn=>btn.classList.remove("active"));
-
-  button.classList.add("active");
+ document.getElementById("textInput").value="";
+ document.getElementById("textLayer").style.display="none";
 
 }
 
-function rotateVideo(degrees){
+/* FILTERS */
 
-  rotation += degrees;
+function filterVideo(filter,button){
 
-  updateTransform();
+ video.style.filter=filter;
+
+ document.querySelectorAll(".filter")
+ .forEach(b=>b.classList.remove("active"));
+
+ button.classList.add("active");
+
+ saveState();
 
 }
 
-function updateTransform(){
+/* TRANSFORM */
 
-  scale =
-    document.getElementById("scaleRange").value;
+function rotate(deg){
 
-  video.style.transform =
-    "rotate(" + rotation + "deg) scale(" + scale + ")";
+ rotation+=deg;
+
+ transformVideo();
+
+ saveState();
+
+}
+
+function transformVideo(){
+
+ const scale=document.getElementById("scale").value;
+
+ video.style.transform=
+  "rotate("+rotation+"deg) scale("+scale+")";
 
 }
 
 function resetTransform(){
 
-  rotation = 0;
-  scale = 1;
+ rotation=0;
 
-  document.getElementById("scaleRange").value = 1;
+ document.getElementById("scale").value=1;
 
-  updateTransform();
+ transformVideo();
 
 }
 
-function exportVideo(){
+/* AUDIO */
 
-  if(!video.src){
+function changeVolume(){
 
-    alert("Сначала загрузите видео.");
+ video.volume=document.getElementById("volume").value;
 
-    return;
+}
 
-  }
+/* AI */
 
-  alert(
-    "Экспорт готовим следующим этапом. Сейчас AlexCut уже умеет загружать видео, проигрывать его и обрезать пальцами на таймлайне."
-  );
+function aiDemo(name){
+
+ alert(
+  "🤖 Alex AI\n\n"+
+  name+
+  "\n\nЭта функция будет подключена к настоящему AI-движку на следующем этапе."
+ );
+
+}
+
+/* ZOOM */
+
+let timelineZoom=1;
+
+function zoomTimeline(dir){
+
+ timelineZoom+=dir*.1;
+
+ timelineZoom=Math.max(.7,Math.min(2,timelineZoom));
+
+ videoTrack.style.transform=
+  "scaleX("+timelineZoom+")";
+
+}
+
+/* HISTORY */
+
+function saveState(){
+
+ const state={
+  start:startTime,
+  end:endTime,
+  rotation:rotation
+ };
+
+ history=history.slice(0,historyIndex+1);
+
+ history.push(state);
+
+ historyIndex=history.length-1;
+
+}
+
+function undo(){
+
+ if(historyIndex<=0)return;
+
+ historyIndex--;
+
+ const s=history[historyIndex];
+
+ startTime=s.start;
+ endTime=s.end;
+ rotation=s.rotation;
+
+ updateTimeline();
+ transformVideo();
+
+}
+
+function redo(){
+
+ if(historyIndex>=history.length-1)return;
+
+ historyIndex++;
+
+ const s=history[historyIndex];
+
+ startTime=s.start;
+ endTime=s.end;
+ rotation=s.rotation;
+
+ updateTimeline();
+ transformVideo();
+
+}
+
+/* EXPORT */
+
+function exportProject(){
+
+ if(!video.src){
+
+  alert("Сначала добавьте видео.");
+
+  return;
+
+ }
+
+ const duration=endTime-startTime;
+
+ alert(
+  "🚀 AlexCut Export\n\n"+
+  "Видео: готово\n"+
+  "Обрезка: "+format(duration)+"\n"+
+  "Музыка: "+(audio.src?"добавлена":"нет")+"\n"+
+  "Текст: "+(document.getElementById("textInput").value?"есть":"нет")+"\n"+
+  "Эффекты: применяются\n\n"+
+  "Следующий этап — настоящий MP4 Export Engine."
+ );
 
 }
 
