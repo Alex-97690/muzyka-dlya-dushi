@@ -1722,5 +1722,31 @@ function exportProject(){
 }
 </script>
 
+<script>
+async function checkAlexCutExport() {
+    if (typeof VideoEncoder === "undefined") {
+        alert("❌ Этот браузер не поддерживает нужный видеодвижок.");
+        return;
+    }
+
+    try {
+        const result = await VideoEncoder.isConfigSupported({
+            codec: "avc1.42001E",
+            width: 1280,
+            height: 720,
+            bitrate: 4000000,
+            framerate: 30
+        });
+
+        if (result.supported) {
+            alert("✅ AlexCut: видеодвижок поддерживается!");
+        } else {
+            alert("⚠️ Браузер найден, но этот формат не поддерживается.");
+        }
+    } catch (error) {
+        alert("⚠️ Проверка не прошла: " + error.message);
+    }
+}
+</script>
 </body>
 </html>
