@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>MEGALODON</title>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      font-family: Arial, sans-serif;
+    }
+
+    #title {
+      position: absolute;
+      top: 45%;
+      width: 100%;
+      text-align: center;
+
+      color: white;
+      font-size: 55px;
+      letter-spacing: 12px;
+
+      opacity: 0;
+      animation: title 8s forwards;
+    }
+
+    @keyframes title {
+      0% {
+        opacity: 0;
+      }
+
+      40% {
+        opacity: 1;
+      }
+
+      70% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="title">
+    MEGALODON
+  </div>
+
+  <script type="module">
+
+    import * as THREE from
+    "https://cdn.jsdelivr.net/npm/three@0.179.1/build/three.module.js";
+
+    // СЦЕНА
+    const scene = new THREE.Scene();
+
+    scene.background = new THREE.Color(0x001018);
+
+    // КАМЕРА
+    const camera = new THREE.PerspectiveCamera(
+      70,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+
+    camera.position.z = 5;
+
+    // ЭКРАН
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true
+    });
+
+    renderer.setSize(
+      window.innerWidth,
+      window.innerHeight
+    );
+
+    document.body.appendChild(renderer.domElement);
+
+    // СВЕТ
+    const light = new THREE.DirectionalLight(
+      0x88ccff,
+      2
+    );
+
+    light.position.set(0, 10, 5);
+
+    scene.add(light);
+
+    // ОКЕАН
+    const oceanGeometry =
+      new THREE.PlaneGeometry(200, 200);
+
+    const oceanMaterial =
+      new THREE.MeshStandardMaterial({
+        color: 0x003b4d,
+        roughness: 1
+      });
+
+    const ocean =
+      new THREE.Mesh(
+        oceanGeometry,
+        oceanMaterial
+      );
+
+    ocean.rotation.x =
+      -Math.PI / 2;
+
+    ocean.position.y = -5;
+
+    scene.add(ocean);
+
+    // ЧАСТИЦЫ ВОДЫ
+    const particles = [];
+
+    for (let i = 0; i < 1000; i++) {
+
+      const geometry =
+        new THREE.SphereGeometry(0.02, 4, 4);
+
+      const material =
+        new THREE.MeshBasicMaterial({
+          color: 0x99ddff
+        });
+
+      const particle =
+        new THREE.Mesh(
+          geometry,
+          material
+        );
+
+      particle.position.set(
+        (Math.random() - 0.5) * 30,
+        (Math.random() - 0.5) * 30,
+        (Math.random() - 0.5) * 30
+      );
+
+      scene.add(particle);
+
+      particles.push(particle);
+    }
+
+    // АНИМАЦИЯ
+    function animate() {
+
+      requestAnimationFrame(animate);
+
+      particles.forEach(p => {
+
+        p.position.y += 0.01;
+
+        if (p.position.y > 15) {
+          p.position.y = -15;
+        }
+
+      });
+
+      // Камера медленно погружается
+      camera.position.y -= 0.002;
+
+      renderer.render(
+        scene,
+        camera
+      );
+    }
+
+    animate();
+
+    // АДАПТАЦИЯ ЭКРАНА
+    window.addEventListener(
+      "resize",
+      () => {
+
+        camera.aspect =
+          window.innerWidth /
+          window.innerHeight;
+
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(
+          window.innerWidth,
+          window.innerHeight
+        );
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>
