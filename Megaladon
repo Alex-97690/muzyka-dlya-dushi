@@ -1,200 +1,500 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>MEGALODON</title>
+<title>MEGALODON</title>
 
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: #000;
-      font-family: Arial, sans-serif;
-    }
+<style>
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+}
 
-    #title {
-      position: absolute;
-      top: 45%;
-      width: 100%;
-      text-align: center;
+canvas {
+    display: block;
+}
 
-      color: white;
-      font-size: 55px;
-      letter-spacing: 12px;
+#cinema {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+}
 
-      opacity: 0;
-      animation: title 8s forwards;
-    }
+#title {
+    position: absolute;
+    top: 43%;
+    width: 100%;
+    text-align: center;
 
-    @keyframes title {
-      0% {
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: clamp(35px, 8vw, 90px);
+    letter-spacing: 15px;
+
+    opacity: 0;
+    animation: title 8s forwards;
+}
+
+@keyframes title {
+    0% {
         opacity: 0;
-      }
-
-      40% {
-        opacity: 1;
-      }
-
-      70% {
-        opacity: 1;
-      }
-
-      100% {
-        opacity: 0;
-      }
     }
-  </style>
+
+    25% {
+        opacity: 1;
+    }
+
+    70% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+#warning {
+    position: absolute;
+    bottom: 12%;
+    width: 100%;
+    text-align: center;
+
+    color: rgba(255,255,255,.7);
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    letter-spacing: 5px;
+
+    opacity: 0;
+    animation: warning 10s 4s forwards;
+}
+
+@keyframes warning {
+    0% {
+        opacity: 0;
+    }
+
+    30% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+</style>
 </head>
 
 <body>
 
-  <div id="title">
-    MEGALODON
-  </div>
+<div id="cinema">
 
-  <script type="module">
+    <div id="title">
+        MEGALODON
+    </div>
 
-    import * as THREE from
-    "https://cdn.jsdelivr.net/npm/three@0.179.1/build/three.module.js";
+    <div id="warning">
+        SOMETHING IS MOVING BELOW...
+    </div>
 
-    // СЦЕНА
-    const scene = new THREE.Scene();
+</div>
 
-    scene.background = new THREE.Color(0x001018);
+<script type="module">
 
-    // КАМЕРА
-    const camera = new THREE.PerspectiveCamera(
-      70,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
+import * as THREE from
+"https://cdn.jsdelivr.net/npm/three@0.179.1/build/three.module.js";
+
+
+/* =========================
+   СЦЕНА
+========================= */
+
+const scene = new THREE.Scene();
+
+scene.background =
+    new THREE.Color(0x00141c);
+
+
+/* =========================
+   ТУМАН
+========================= */
+
+scene.fog = new THREE.FogExp2(
+    0x00141c,
+    0.045
+);
+
+
+/* =========================
+   КАМЕРА
+========================= */
+
+const camera =
+    new THREE.PerspectiveCamera(
+        70,
+        window.innerWidth /
+        window.innerHeight,
+        0.1,
+        1000
     );
 
-    camera.position.z = 5;
+camera.position.set(
+    0,
+    0,
+    8
+);
 
-    // ЭКРАН
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true
+
+/* =========================
+   RENDERER
+========================= */
+
+const renderer =
+    new THREE.WebGLRenderer({
+        antialias: true
     });
 
-    renderer.setSize(
-      window.innerWidth,
-      window.innerHeight
+renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio, 2)
+);
+
+renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+);
+
+document.body.appendChild(
+    renderer.domElement
+);
+
+
+/* =========================
+   СВЕТ
+========================= */
+
+const light =
+    new THREE.DirectionalLight(
+        0x7fdcff,
+        3
     );
 
-    document.body.appendChild(renderer.domElement);
+light.position.set(
+    0,
+    10,
+    5
+);
 
-    // СВЕТ
-    const light = new THREE.DirectionalLight(
-      0x88ccff,
-      2
+scene.add(light);
+
+
+const ambient =
+    new THREE.AmbientLight(
+        0x16485a,
+        1
     );
 
-    light.position.set(0, 10, 5);
+scene.add(ambient);
 
-    scene.add(light);
 
-    // ОКЕАН
-    const oceanGeometry =
-      new THREE.PlaneGeometry(200, 200);
+/* =========================
+   ПОВЕРХНОСТЬ ОКЕАНА
+========================= */
 
-    const oceanMaterial =
-      new THREE.MeshStandardMaterial({
+const waterGeometry =
+    new THREE.PlaneGeometry(
+        200,
+        200,
+        100,
+        100
+    );
+
+const waterMaterial =
+    new THREE.MeshStandardMaterial({
         color: 0x003b4d,
+        roughness: 0.8,
+        metalness: 0.1
+    });
+
+const water =
+    new THREE.Mesh(
+        waterGeometry,
+        waterMaterial
+    );
+
+water.rotation.x =
+    -Math.PI / 2;
+
+water.position.y = 6;
+
+scene.add(water);
+
+
+/* =========================
+   ЧАСТИЦЫ ВОДЫ
+========================= */
+
+const particleGeometry =
+    new THREE.BufferGeometry();
+
+const particleCount = 2500;
+
+const positions =
+    new Float32Array(
+        particleCount * 3
+    );
+
+for (
+    let i = 0;
+    i < particleCount;
+    i++
+) {
+
+    positions[i * 3] =
+        (Math.random() - 0.5) * 50;
+
+    positions[i * 3 + 1] =
+        (Math.random() - 0.5) * 50;
+
+    positions[i * 3 + 2] =
+        (Math.random() - 0.5) * 50;
+}
+
+particleGeometry.setAttribute(
+    "position",
+    new THREE.BufferAttribute(
+        positions,
+        3
+    )
+);
+
+const particleMaterial =
+    new THREE.PointsMaterial({
+        color: 0x8fdcff,
+        size: 0.06,
+        transparent: true,
+        opacity: 0.6
+    });
+
+const particles =
+    new THREE.Points(
+        particleGeometry,
+        particleMaterial
+    );
+
+scene.add(particles);
+
+
+/* =========================
+   ТЕНЬ МЕГАЛОДОНА
+========================= */
+
+const sharkGroup =
+    new THREE.Group();
+
+scene.add(sharkGroup);
+
+
+/* ТЕЛО */
+
+const bodyGeometry =
+    new THREE.SphereGeometry(
+        2.8,
+        32,
+        16
+    );
+
+const bodyMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x071016,
         roughness: 1
-      });
+    });
 
-    const ocean =
-      new THREE.Mesh(
-        oceanGeometry,
-        oceanMaterial
-      );
+const body =
+    new THREE.Mesh(
+        bodyGeometry,
+        bodyMaterial
+    );
 
-    ocean.rotation.x =
-      -Math.PI / 2;
+body.scale.set(
+    3.5,
+    0.65,
+    1
+);
 
-    ocean.position.y = -5;
+sharkGroup.add(body);
 
-    scene.add(ocean);
 
-    // ЧАСТИЦЫ ВОДЫ
-    const particles = [];
+/* НОС */
 
-    for (let i = 0; i < 1000; i++) {
+const noseGeometry =
+    new THREE.ConeGeometry(
+        1.2,
+        3.5,
+        32
+    );
 
-      const geometry =
-        new THREE.SphereGeometry(0.02, 4, 4);
+const nose =
+    new THREE.Mesh(
+        noseGeometry,
+        bodyMaterial
+    );
 
-      const material =
-        new THREE.MeshBasicMaterial({
-          color: 0x99ddff
-        });
+nose.rotation.z =
+    -Math.PI / 2;
 
-      const particle =
-        new THREE.Mesh(
-          geometry,
-          material
-        );
+nose.position.x =
+    8;
 
-      particle.position.set(
-        (Math.random() - 0.5) * 30,
-        (Math.random() - 0.5) * 30,
-        (Math.random() - 0.5) * 30
-      );
+sharkGroup.add(nose);
 
-      scene.add(particle);
 
-      particles.push(particle);
-    }
+/* ХВОСТ */
 
-    // АНИМАЦИЯ
-    function animate() {
+const tailGeometry =
+    new THREE.ConeGeometry(
+        2,
+        4,
+        3
+    );
 
-      requestAnimationFrame(animate);
+const tail =
+    new THREE.Mesh(
+        tailGeometry,
+        bodyMaterial
+    );
 
-      particles.forEach(p => {
+tail.rotation.z =
+    Math.PI / 2;
 
-        p.position.y += 0.01;
+tail.position.x =
+    -10;
 
-        if (p.position.y > 15) {
-          p.position.y = -15;
-        }
+sharkGroup.add(tail);
 
-      });
 
-      // Камера медленно погружается
-      camera.position.y -= 0.002;
+/* ПЛАВНИК */
 
-      renderer.render(
+const finGeometry =
+    new THREE.ConeGeometry(
+        1.5,
+        4,
+        3
+    );
+
+const fin =
+    new THREE.Mesh(
+        finGeometry,
+        bodyMaterial
+    );
+
+fin.rotation.z =
+    Math.PI;
+
+fin.position.y =
+    2;
+
+fin.position.x =
+    0;
+
+sharkGroup.add(fin);
+
+
+/* ПОЗИЦИЯ АКУЛЫ */
+
+sharkGroup.position.set(
+    -30,
+    4,
+    -30
+);
+
+sharkGroup.rotation.y =
+    0.3;
+
+
+/* =========================
+   АНИМАЦИЯ
+========================= */
+
+const clock =
+    new THREE.Clock();
+
+function animate() {
+
+    requestAnimationFrame(
+        animate
+    );
+
+    const time =
+        clock.getElapsedTime();
+
+
+    /* частицы */
+
+    particles.rotation.y =
+        time * 0.01;
+
+
+    /* камера погружается */
+
+    camera.position.y =
+        -time * 0.08;
+
+
+    /* акула приближается */
+
+    sharkGroup.position.x =
+        -30 + time * 2.8;
+
+    sharkGroup.position.z =
+        -30 + time * 1.2;
+
+
+    /* движение тела */
+
+    sharkGroup.rotation.z =
+        Math.sin(time * 2) * 0.04;
+
+
+    renderer.render(
         scene,
         camera
-      );
-    }
+    );
+}
 
-    animate();
 
-    // АДАПТАЦИЯ ЭКРАНА
-    window.addEventListener(
-      "resize",
-      () => {
+/* =========================
+   РАЗМЕР ЭКРАНА
+========================= */
+
+window.addEventListener(
+    "resize",
+    () => {
 
         camera.aspect =
-          window.innerWidth /
-          window.innerHeight;
+            window.innerWidth /
+            window.innerHeight;
 
         camera.updateProjectionMatrix();
 
         renderer.setSize(
-          window.innerWidth,
-          window.innerHeight
+            window.innerWidth,
+            window.innerHeight
         );
+    }
+);
 
-      }
-    );
 
-  </script>
+animate();
+
+</script>
 
 </body>
 </html>
